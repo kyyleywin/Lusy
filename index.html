@@ -1,1 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iseng Iseng</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
 
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">PunyaAing</div>
+
+        <div class="search">
+            <input type="text" placeholder="Search... ( / )">
+        </div>
+
+        <div class="right-controls">
+
+            <!-- Dark/Light toggle -->
+            <button id="themeToggle" class="theme-toggle">🌙</button>
+
+            <!-- Hamburger -->
+            <div id="hamburger" class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+        </div>
+    </nav>
+
+<!-- SIDEBAR -->
+<div id="sidebar" class="sidebar">
+    <a href="#">Home</a>
+    <a href="#">Features</a>
+    <a href="#">Pricing</a>
+    <a href="#">Contact</a>
+</div>
+
+    <!-- Overlay -->
+    <div id="overlay" class="overlay"></div>
+    
+    <!-- JUMBOTRON SLIDER -->
+<div class="jumbotron-slider">
+    <div class="slides">
+        <img src="assets/img/gambar1.jpg" class="slide active" alt="Slide 1">
+        <img src="assets/img/gambar2.jpeg" class="slide" alt="Slide 2">
+        <img src="assets/img/gambar3.jpeg" class="slide" alt="Slide 3">
+    </div>
+    <div class="dots">
+        <span class="dot active" onclick="currentSlide(0)"></span>
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+    </div>
+</div>
+
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
