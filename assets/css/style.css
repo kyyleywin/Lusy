@@ -170,62 +170,309 @@ body.dark .search input {
     position: relative;
     width: 100%;
     max-width: 1200px;
-    margin: 66px auto 40px auto; /* jarak atas lebih dekat dari navbar */
+    margin: 65px auto 5px auto;
     overflow: hidden;
-    /*border-radius: 20px;*/
-    background: var(--glass);
+
+    background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.15),
+        rgba(0,0,0,0.25)
+    );
     backdrop-filter: blur(15px);
+
     border: 1px solid var(--border-strong);
+    border-radius: 5px;
+    padding: 25px;
+    z-index: 1;
 }
 
-/* Container slides dengan rasio 16:9 */
+/* Tinggi jumbotron – FULL 16:9 */
 .jumbotron-slider .slides {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; /* 16:9 */
+    aspect-ratio: 16 / 9; /* FIX 16:9 */
 }
 
-/* Slide individual */
+/* Slide */
 .jumbotron-slider .slide {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-}
-
-.jumbotron-slider .slide.active {
-    display: block;
-}
-
-/* Gambar di dalam slide */
-.jumbotron-slider .slide img {
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 20px;
+    border-radius: 18px;
+
+    opacity: 0;
+    transition: opacity .4s ease; /* animasi lebih cepat */
 }
 
-/* Navigation dots */
-.jumbotron-slider .dots {
-    text-align: center;
-    position: absolute;
-    bottom: 12px;
-    width: 100%;
+/* Slide aktif */
+.jumbotron-slider .slide.active {
+    opacity: 1;
 }
 
+/* Hapus dots */
+.jumbotron-slider .dots,
 .jumbotron-slider .dot {
-    height: 12px;
-    width: 12px;
-    margin: 0 5px;
-    background-color: rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
-    display: inline-block;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    display: none !important;
 }
 
-.jumbotron-slider .dot.active {
-    background-color: #fff;
+/* === CATEGORY SLIDER === */
+.category-slider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 15px auto 0 auto;
+    padding: 0 10px;
+    margin-right: 15%;
+    z-index: 5;
 }
+
+/* Tombol kiri & kanan */
+.nav-btn {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    
+    padding: 10px 14px;
+    font-size: 18px;
+    border-radius: 14px;
+    cursor: pointer;
+    color: white;
+    font-weight: 700;
+    transition: 0.25s ease;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.nav-btn:active {
+    transform: scale(0.95);
+}
+
+/* Scroll wrapper */
+.category-wrapper {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+}
+
+.category-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+/* Item kategori (Dark Mode Default) */
+.category-item {
+    padding: 10px 22px;
+    font-size: 15px;
+    border-radius: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    color: #fff;
+    transition: 0.25s ease;
+}
+
+.category-item:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.category-item.active {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.45);
+    color: #000;
+}
+
+/* === LIGHT MODE FIX (supaya kategori tetap terlihat) === */
+body:not(.dark) .category-item {
+    background: rgba(0, 0, 0, 0.15) !important;
+    border-color: rgba(0, 0, 0, 0.25) !important;
+    color: #000 !important;
+}
+
+body:not(.dark) .category-item:hover {
+    background: rgba(0, 0, 0, 0.25) !important;
+}
+
+body:not(.dark) .category-item.active {
+    background: rgba(0, 0, 0, 0.40) !important;
+    border-color: rgba(0, 0, 0, 0.55) !important;
+    color: #fff !important;
+}
+
+/* Tombol kiri kanan versi light mode */
+body:not(.dark) .nav-btn {
+    background: rgba(0, 0, 0, 0.15) !important;
+    border-color: rgba(0, 0, 0, 0.25) !important;
+    color: #000 !important;
+}
+
+/* === GAME GRID === */
+.game-section {
+    width: 100%;
+    padding: 10px 15px 30px;
+    margin-top: 10px;
+}
+
+/* Grid responsif 3 kolom */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1.05fr); /* sedikit lebih lebar tiap card */
+    gap: 5px;
+}
+
+/* Item Game (lebih tinggi dan lebar) */
+.game-item {
+    position: relative;
+    height: 200px;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s ease;
+    border: 2px solid transparent;
+}
+
+/* Efek aktif */
+.game-item.active {
+    border-color: #eac544;
+    box-shadow: 0 0 15px #eac54480;
+}
+
+/* Gambar game menyesuaikan ukuran baru */
+.game-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
+    transition: transform 0.25s ease;
+}
+
+/* CONTAINER BARU (Pseudo-element) untuk Layer Gelap Saat Hover */
+.game-item::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    /* Layer gelap/gradien awal yang tersembunyi */
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 40%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    z-index: 10;
+}
+
+/* Teks Judul */
+.game-title {
+    position: absolute;
+    bottom: 25px; /* Disesuaikan agar berada di atas deskripsi */
+    width: 100%;
+    padding: 0 8px 3px 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    z-index: 20;
+    
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+/* DESKRIPSI GAME BARIS TUNGGAL (Paling Bawah) */
+.game-description {
+    position: absolute;
+    bottom: 5px; /* Posisikan dekat bagian paling bawah card */
+    width: 100%;
+    padding: 0 8px;
+    font-size: 11px;
+    color: #ccc;
+    z-index: 20;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    line-height: 1.3;
+
+    /* Logic untuk memotong teks 1 baris */
+    display: -webkit-box;
+    -webkit-line-clamp: 1; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* NOTE: Kelas .game-description-2 sudah dihapus dari sini. */
+
+
+/* Munculkan Judul dan Deskripsi saat hover */
+.game-item:hover .game-title,
+.game-item:hover .game-description,
+.game-item:hover::before {
+    opacity: 1;
+}
+
+/* Efek sedikit zoom pada gambar saat hover */
+.game-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Tombol Load More */
+.load-more {
+    width: 100%;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 10px 0;
+    border-radius: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+}
+
+.load-more:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+/* Modifikasi agar terlihat seperti teks saat class 'text-mode' ada */
+.load-more.text-mode {
+    background: transparent; /* Hapus background */
+    color: var(--text); /* Gunakan warna teks standar */
+    border: none; /* Hapus border */
+    padding: 10px 0; /* Kurangi padding */
+    text-align: center; /* Pastikan di tengah */
+    text-decoration: none; /* <<< DIUBAH: HILANGKAN GARIS BAWAH */
+    
+    /* Reset hover untuk mode teks */
+    backdrop-filter: none;
+}
+
+.load-more.text-mode:hover {
+    background: transparent;
+    color: var(--text); 
+    opacity: 0.8;
+}
+
+/* Light Mode Fix */
+body:not(.dark) .game-item.active {
+    border-color: #eac544;
+    box-shadow: 0 0 15px #eac544;
+}
+
+body:not(.dark) .load-more {
+    background: rgba(0,0,0,0.15);
+    color: #000;
+    border-color: rgba(0,0,0,0.25);
+}
+
+body:not(.dark) .load-more.text-mode {
+    color: #000 !important;
+    }
