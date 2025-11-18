@@ -8,7 +8,6 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo">PunyaAing</div>
 
@@ -18,10 +17,8 @@
 
         <div class="right-controls">
 
-            <!-- Dark/Light toggle -->
             <button id="themeToggle" class="theme-toggle">🌙</button>
 
-            <!-- Hamburger -->
             <div id="hamburger" class="hamburger">
                 <span></span>
                 <span></span>
@@ -31,7 +28,6 @@
         </div>
     </nav>
 
-<!-- SIDEBAR -->
 <div id="sidebar" class="sidebar">
     <a href="#">Home</a>
     <a href="#">Features</a>
@@ -39,24 +35,129 @@
     <a href="#">Contact</a>
 </div>
 
-    <!-- Overlay -->
     <div id="overlay" class="overlay"></div>
     
-    <!-- JUMBOTRON SLIDER -->
-<div class="jumbotron-slider">
+    <div class="jumbotron-slider">
     <div class="slides">
-        <img src="assets/img/gambar1.jpg" class="slide active" alt="Slide 1">
-        <img src="assets/img/gambar2.jpeg" class="slide" alt="Slide 2">
-        <img src="assets/img/gambar3.jpeg" class="slide" alt="Slide 3">
+        <img src="assets/img/foto1.jpeg" class="slide active" alt="Slide 1">
+        <img src="assets/img/foto2.jpeg" class="slide" alt="Slide 2">
+        <img src="assets/img/foto3.jpeg" class="slide" alt="Slide 3">
     </div>
-    <div class="dots">
-        <span class="dot active" onclick="currentSlide(0)"></span>
-        <span class="dot" onclick="currentSlide(1)"></span>
-        <span class="dot" onclick="currentSlide(2)"></span>
+</div>
+
+<div class="category-slider">
+    <button class="nav-btn left-btn">‹</button>
+
+    <div class="category-wrapper">
+        <div class="category-item active" data-category="secret">Keqing</div>
+        <div class="category-item" data-category="mitos">Yae Miko</div>
+        <div class="category-item" data-category="tumbal">Raiden Shogun</div>
+        <div class="category-item" data-category="testimoni">Clorinde</div>
+        <div class="category-item" data-category="all">Semua Game</div>
     </div>
+
+    <button class="nav-btn right-btn">›</button>
+</div>
+
+<div class="game-section">
+    <div class="game-grid" id="gameGrid">
+        <!-- SECRET -->
+        <div class="game-item" data-category="secret">
+            <img src="assets/img/game1.jpeg" alt="Ragnarok V">
+            <div class="game-title">Ragnarok V</div>
+            <div class="game-description">Deskripsi Game Planet Miner yang panjang dan akan terpotong</div>
+        </div>
+        <div class="game-item" data-category="secret">
+            <img src="assets/img/game3.jpeg" alt="Planet Miner">
+            <div class="game-title">Planet Miner</div>
+            <div class="game-description">Deskripsi Game Planet Miner yang panjang dan akan terpotong.</div>
+        </div>
+        <div class="game-item" data-category="secret">
+            <img src="assets/img/game4.jpeg" alt="Power Rangers">
+            <div class="game-title">Power Rangers</div>
+            <div class="game-description">Deskripsi Game Power Rangers yang panjang dan akan terpotong.</div>
+        </div>
+        <div class="game-item" data-category="secret">
+            <img src="assets/img/game2.png" alt="Power Rangers">
+            <div class="game-title">Power Rangers</div>
+            <div class="game-description">Deskripsi Game Power Rangers yang panjang dan akan terpotong.</div>
+        </div>
+        
+        
+        <!-- MITOS -->
+        <div class="game-item" data-category="mitos">
+            <img src="assets/img/game2.png" alt="Mafia City">
+            <div class="game-title">Mafia City</div>
+            <div class="game-description">Deskripsi Game Planet Miner yang panjang dan akan terpotong</div>
+        </div>
+        <div class="game-item" data-category="mitos">
+            <img src="assets/img/game4.jpeg" alt="Immortal Heritage">
+            <div class="game-title">Immortal Heritage</div>
+            <div class="game-description">Deskripsi Game Immortal Heritage yang panjang dan akan terpotong.</div>
+        </div>
+        <div class="game-item" data-category="mitos">
+            <img src="assets/img/game1.jpeg" alt="Mafia City">
+            <div class="game-title">Mafia City</div>
+            <div class="game-description">Deskripsi Game Planet Miner yang panjang dan akan terpotong</div>
+        </div>
+        <div class="game-item" data-category="mitos">
+            <img src="assets/img/game3.jpeg" alt="Mafia City">
+            <div class="game-title">Mafia City</div>
+            <div class="game-description">Deskripsi Game Planet Miner yang panjang dan akan terpotong</div>
+        </div>
+        
+        
+        <!-- TUMBAL -->
+        <div class="game-item" data-category="tumbal">
+            <img src="assets/img/game4.jpeg" alt="Sword Justice">
+            <div class="game-title">Sword Justice</div>
+            <div class="game-description">Deskripsi Game Sword Justice yang panjang dan akan terpotong.</div>
+        </div>
+        <div class="game-item" data-category="tumbal">
+            <img src="assets/img/game1.jpeg" alt="Sword Justice">
+            <div class="game-title">Sword Justice</div>
+            <div class="game-description">Deskripsi Game Sword Justice yang panjang dan akan terpotong.</div>
+        </div>
+        <div class="game-item" data-category="tumbal">
+            <img src="assets/img/game3.jpeg" alt="Sword Justice">
+            <div class="game-title">Sword Justice</div>
+            <div class="game-description">Deskripsi Game Sword Justice yang panjang dan akan terpotong.</div>
+        </div>
+        <div class="game-item" data-category="tumbal">
+            <img src="assets/img/game2.png" alt="Sword Justice">
+            <div class="game-title">Sword Justice</div>
+            <div class="game-description">Deskripsi Game Sword Justice yang panjang dan akan terpotong.</div>
+        </div>
+        
+        
+        <!-- TESTIMONI -->
+        <div class="game-item" data-category="testimoni">
+          <img src="assets/img/game1.jpeg" alt="Sword Justice">
+          <div class="game-title">Sword Justice</div>
+          <div class="game-description">Deskripsi Game Sword Justice yang panjang dan akan terpotong.</div>
+        </div>
+        <div class="game-item" data-category="testimoni">
+          <img src="assets/img/game2.png" alt="Sword Justice">
+          <div class="game-title">Sword Justice</div>
+          <div class="game-description">Deskripsi Game Sword Justice yang panjang dan akan terpotong.</div>
+        </div>
+        <div class="game-item" data-category="testimoni">
+          <img src="assets/img/game3.jpeg" alt="Sword Justice">
+          <div class="game-title">Sword Justice</div>
+          <div class="game-description">Deskripsi Game Sword Justice yang panjang dan akan terpotong.</div>
+        </div>
+        <div class="game-item" data-category="testimoni">
+          <img src="assets/img/game4.jpeg" alt="Sword Justice">
+          <div class="game-title">Sword Justice</div>
+          <div class="game-description">Deskripsi Game Sword Justice yang panjang dan akan terpotong.</div>
+        </div>
+        
+    </div>
+
+    <button class="load-more" id="loadMoreBtn">Tampilkan Lebih Banyak...</button>
 </div>
 
 
     <script src="assets/js/script.js"></script>
-</body>
+    </body>
 </html>
