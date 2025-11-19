@@ -3,476 +3,485 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+    --bg: #0f0f0f;
+    --text: #fff;
+    --glass: rgba(40, 40, 40, 0.95);
+    --border: rgba(255,255,255,0.15);
+    --accent: #f3cb51;
 }
 
 body {
     background: var(--bg);
     color: var(--text);
-    font-family: Arial, sans-serif;
-    transition: .3s ease;
+    font-family: 'Segoe UI', sans-serif;
+    overflow-x: hidden;
 }
 
-/* LIGHT MODE */
-:root {
-    --bg: #e9e9e9;
-    --text: #222;
-    --glass: rgba(255,255,255,0.35);
-    --border: rgba(0,0,0,0.18);
-    --border-strong: rgba(0,0,0,0.25);
-}
-
-/* DARK MODE */
-body.dark {
-    --bg: #0f0f0f;
-    --text: #fff;
-    --glass: rgba(30,30,30,0.45);
-    --border: rgba(255,255,255,0.18);
-    --border-strong: rgba(255,255,255,0.25);
-}
-
-/* NAVBAR */
+/* === NAVBAR UTAMA === */
 .navbar {
     width: 100%;
-    height: 65px;
-    padding: 0 18px;
+    height: 70px;
+    padding: 0 30px;
     position: fixed;
     top: 0;
     z-index: 3000;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-
-    background: var(--glass);
+    justify-content: space-between; 
+    gap: 20px;
+    background: rgba(255,255,255,0.1);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
 }
 
-/* Search */
-.search input {
-    padding: 7px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.3);
-    backdrop-filter: blur(5px);
-    color: var(--text);
-}
-
-body.dark .search input {
-    background: rgba(40,40,40,0.5);
-}
-
-/* RIGHT SIDE CONTROLS */
-.right-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* Dark Mode Button */
-.theme-toggle {
-    border: none;
-    background: transparent;
+.logo {
+    font-weight: 800;
     font-size: 22px;
-    cursor: pointer;
+    color: var(--accent);
+    flex-shrink: 0;
 }
 
-/* HAMBURGER */
-.hamburger {
-    width: 30px;
-    height: 22px;
+/* MENU LINKS */
+.nav-menu {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
+    gap: 25px;
+    align-items: center;
 }
-
-.hamburger span {
-    height: 3px;
-    width: 100%;
-    background: var(--text);
-    border-radius: 5px;
-    transition: .35s ease;
-}
-
-/* Hamburger → X */
-.hamburger.active span:nth-child(1) {
-    transform: translateY(9px) rotate(45deg);
-}
-.hamburger.active span:nth-child(2) {
-    opacity: 0;
-}
-.hamburger.active span:nth-child(3) {
-    transform: translateY(-9px) rotate(-45deg);
-}
-
-/* SIDEBAR / SLIDE MENU */
-.sidebar {
-    position: fixed;
-    top: 65px; /* tepat di bawah navbar */
-    right: -270px;
-    width: 270px;
-
-    height: calc(100% - 65px);
-
-    padding: 25px 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: .35s ease;
-
-    background: var(--glass);
-    backdrop-filter: blur(12px);
-    border-left: 1px solid var(--border);
-
-    z-index: 1000;
-}
-
-.sidebar.active {
-    right: 0;
-}
-
-/* SIDEBAR LINKS — DENGAN GARIS PEMBATAS TIPIS */
-.sidebar a {
+.nav-link {
     text-decoration: none;
     color: var(--text);
-    font-size: 18px;
-    padding: 8px 0 15px 0;
-
-    border-bottom: 1px solid var(--border-strong);
+    font-size: 16px;
+    font-weight: 500;
+    transition: 0.3s;
+    position: relative;
 }
-
-/* Hapus garis di item terakhir */
-.sidebar a:last-child {
-    border-bottom: none;
+.nav-link:hover { color: var(--accent); }
+.nav-link::after {
+    content: ''; 
+    position: absolute; 
+    bottom: -5px; 
+    left: 0; 
+    width: 0; 
+    height: 2px;
+    background: var(--accent); 
+    transition: 0.3s;
 }
+.nav-link:hover::after { width: 100%; }
 
-/* OVERLAY */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+/* --- SEARCH BOX --- */
+.search {
+    display: flex; 
+    align-items: center;
+    justify-content: flex-end; 
+    flex-shrink: 0; 
+    position: relative; 
     height: 100%;
-    background: rgba(0,0,0,0.35);
-    opacity: 0;
-    pointer-events: none;
-    transition: .3s ease;
-    z-index: 1500;
 }
-
-.overlay.active {
+.search-icon {
+    background: none; 
+    border: none; 
+    color: var(--text); 
+    font-size: 20px;
+    cursor: pointer; 
+    padding: 5px; 
+    line-height: 1; 
+    z-index: 10; 
+    flex-shrink: 0;
+}
+.search input {
+    border-radius: 20px; 
+    border: 1px solid var(--border);
+    background: rgba(20,20,20,0.5); 
+    color: var(--text); 
+    outline: none;
+    width: 0; 
+    padding: 0; 
+    margin-right: 5px; 
+    opacity: 0;
+    transition: width 0.4s ease, padding 0.4s ease, opacity 0.3s ease;
+    position: absolute; 
+    right: 35px; 
+    pointer-events: none;
+}
+.search.active input {
+    width: 250px; 
+    padding: 8px 15px;
     opacity: 1;
     pointer-events: auto;
 }
 
-/* JUMBOTRON SLIDER */
-.jumbotron-slider {
-    position: relative;
-    width: 100%;
-    max-width: 1200px;
-    margin: 65px auto 5px auto;
-    overflow: hidden;
-
-    background: linear-gradient(
-        135deg,
-        rgba(255,255,255,0.15),
-        rgba(0,0,0,0.25)
-    );
-    backdrop-filter: blur(15px);
-
-    border: 1px solid var(--border-strong);
-    border-radius: 5px;
-    padding: 25px;
-    z-index: 1;
+/* HAMBURGER & OVERLAY */
+.hamburger {
+    display: none; 
+    flex-direction: column; 
+    justify-content: space-between;
+    width: 28px; 
+    height: 20px; 
+    cursor: pointer;
 }
-
-/* Tinggi jumbotron – FULL 16:9 */
-.jumbotron-slider .slides {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9; /* FIX 16:9 */
+.hamburger span { 
+  height: 3px; 
+  width: 100%; 
+  background: var(--text); 
+  border-radius: 5px; 
+  transition: 0.3s; 
 }
-
-/* Slide */
-.jumbotron-slider .slide {
-    position: absolute;
-    inset: 0;
-    width: 100%;
+.overlay {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
     height: 100%;
-    object-fit: cover;
-    border-radius: 18px;
-
-    opacity: 0;
-    transition: opacity .4s ease; /* animasi lebih cepat */
+    background: rgba(0,0,0,0.7); 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: .3s; 
+    z-index: 2900;
+}
+.overlay.active { 
+  opacity: 1; 
+  pointer-events: auto; 
 }
 
-/* Slide aktif */
-.jumbotron-slider .slide.active {
-    opacity: 1;
+/* === JUMBOTRON & CATEGORY === */
+.jumbotron-slider {
+    width: 95%; 
+    max-width: 1200px; 
+    margin: 85px auto 10px; 
+    overflow: hidden; 
+    border-radius: 12px; 
+    aspect-ratio: 16 / 7;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
-
-/* Hapus dots */
-.jumbotron-slider .dots,
-.jumbotron-slider .dot {
-    display: none !important;
+.jumbotron-slider .slides { 
+  display: flex; 
+  width: 100%; 
+  height: 100%; 
+  transition: transform 0.5s ease; 
 }
+.jumbotron-slider .slide { 
+  min-width: 100%; 
+  height: 100%; 
+  object-fit: cover; }
 
-/* === CATEGORY SLIDER === */
-.category-slider {
+.category-slider { 
+    display: flex; 
+    align-items: center; /* PENTING: Untuk mensejajarkan tombol dan wrapper */
+    justify-content: center; 
+    gap: 10px; 
+    margin: 10px auto; 
+    padding: 0 10px; 
+    max-width: 1200px; 
+}
+.category-wrapper { 
+    display: flex; 
+    gap: 10px; 
+    overflow-x: auto; 
+    scroll-behavior: smooth; 
+    padding-bottom: 0; 
+    scrollbar-width: none; 
+}
+.category-wrapper::-webkit-scrollbar { 
+  display: none; 
+}
+.category-item { 
+    padding: 8px 20px; 
+    font-size: 14px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    background: rgba(255,255,255,0.1); 
+    color: #bbb; 
+    transition: 0.3s; 
+    white-space: nowrap; 
+}
+.category-item.active { 
+  background: var(--accent); 
+  color: #000; }
+.nav-btn { 
+    background: var(--accent); 
+    border: none; 
+    color: white; 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    flex-shrink: 0; 
+
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 12px;
-    margin: 15px auto 0 auto;
-    padding: 0 10px;
-    margin-right: 15%;
-    z-index: 5;
+    font-size: 18px; 
 }
 
-/* Tombol kiri & kanan */
-.nav-btn {
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    
-    padding: 10px 14px;
-    font-size: 18px;
-    border-radius: 14px;
-    cursor: pointer;
-    color: white;
-    font-weight: 700;
-    transition: 0.25s ease;
+
+.game-section { 
+  width: 100%; 
+  padding: 5px 5% 50px; 
+  max-width: 1300px; 
+  margin: 0 auto; 
 }
-
-.nav-btn:hover {
-    background: rgba(255, 255, 255, 0.28);
-}
-
-.nav-btn:active {
-    transform: scale(0.95);
-}
-
-/* Scroll wrapper */
-.category-wrapper {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-}
-
-.category-wrapper::-webkit-scrollbar {
-    display: none;
-}
-
-/* Item kategori (Dark Mode Default) */
-.category-item {
-    padding: 10px 22px;
-    font-size: 15px;
-    border-radius: 14px;
-    font-weight: 700;
-    white-space: nowrap;
-    cursor: pointer;
-
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-
-    color: #fff;
-    transition: 0.25s ease;
-}
-
-.category-item:hover {
-    background: rgba(255, 255, 255, 0.28);
-}
-
-.category-item.active {
-    background: rgba(255, 255, 255, 0.35);
-    border-color: rgba(255, 255, 255, 0.45);
-    color: #000;
-}
-
-/* === LIGHT MODE FIX (supaya kategori tetap terlihat) === */
-body:not(.dark) .category-item {
-    background: rgba(0, 0, 0, 0.15) !important;
-    border-color: rgba(0, 0, 0, 0.25) !important;
-    color: #000 !important;
-}
-
-body:not(.dark) .category-item:hover {
-    background: rgba(0, 0, 0, 0.25) !important;
-}
-
-body:not(.dark) .category-item.active {
-    background: rgba(0, 0, 0, 0.40) !important;
-    border-color: rgba(0, 0, 0, 0.55) !important;
-    color: #fff !important;
-}
-
-/* Tombol kiri kanan versi light mode */
-body:not(.dark) .nav-btn {
-    background: rgba(0, 0, 0, 0.15) !important;
-    border-color: rgba(0, 0, 0, 0.25) !important;
-    color: #000 !important;
-}
-
-/* === GAME GRID === */
-.game-section {
-    width: 100%;
-    padding: 10px 15px 30px;
-    margin-top: 10px;
-}
-
-/* Grid responsif 3 kolom */
 .game-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1.05fr); /* sedikit lebih lebar tiap card */
-    gap: 5px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
 }
-
-/* Item Game (lebih tinggi dan lebar) */
 .game-item {
-    position: relative;
-    height: 200px;
-    border-radius: 14px;
+    position: relative; 
+    aspect-ratio: 3 / 4;
+    background: #1a1a1a;
+    border-radius: 12px; 
     overflow: hidden;
-    cursor: pointer;
-    transition: 0.3s ease;
+    cursor: pointer; 
+    transition: 0.3s; 
     border: 2px solid transparent;
 }
-
-/* Efek aktif */
-.game-item.active {
-    border-color: #eac544;
-    box-shadow: 0 0 15px #eac54480;
+.game-item:hover { transform: translateY(-5px); border-color: var(--accent); }
+.game-item img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  transition: transform 0.5s ease; 
 }
 
-/* Gambar game menyesuaikan ukuran baru */
-.game-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 14px;
-    transition: transform 0.25s ease;
-}
-
-/* CONTAINER BARU (Pseudo-element) untuk Layer Gelap Saat Hover */
+/* Hover Effect (.game-item) */
 .game-item::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    /* Layer gelap/gradien awal yang tersembunyi */
-    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 40%);
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    z-index: 10;
+    content: ''; 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    height: 70%;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 10%, transparent);
+    z-index: 1; 
+    opacity: 0; 
+    transition: opacity 0.3s ease;
 }
-
-/* Teks Judul */
 .game-title {
-    position: absolute;
-    bottom: 25px; /* Disesuaikan agar berada di atas deskripsi */
-    width: 100%;
-    padding: 0 8px 3px 8px;
-    font-size: 14px;
-    font-weight: 700;
-    color: white;
-    z-index: 20;
-    
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
+    position: absolute; 
+    bottom: 30px; 
+    left: 10px; 
+    right: 10px;
+    font-size: 14px; 
+    font-weight: 700; 
+    color: white; 
+    z-index: 2;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
+    opacity: 0; 
+    transition: opacity 0.3s ease 0.1s; 
+}
+.game-description {
+    position: absolute; 
+    bottom: 10px; 
+    left: 10px; 
+    right: 10px;
+    font-size: 11px; 
+    color: #ccc; 
+    z-index: 2;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    opacity: 0; 
+    transition: opacity 0.3s ease 0.15s; 
+}
+.game-item:hover .game-title,
+.game-item:hover .game-description,
+.game-item:hover::before { 
+  opacity: 1; 
+}
+.game-item:hover img { 
+  transform: scale(1.05); 
 }
 
-/* DESKRIPSI GAME BARIS TUNGGAL (Paling Bawah) */
-.game-description {
-    position: absolute;
-    bottom: 5px; /* Posisikan dekat bagian paling bawah card */
-    width: 100%;
-    padding: 0 8px;
-    font-size: 11px;
-    color: #ccc;
-    z-index: 20;
 
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-    line-height: 1.3;
-
-    /* Logic untuk memotong teks 1 baris */
-    display: -webkit-box;
-    -webkit-line-clamp: 1; 
-    -webkit-box-orient: vertical;
+/* === 2. GAYA BARU: GRID ALTERNATIF (IKAN) === */
+.game-grid-alt {
+    display: none; /* Sembunyikan default, diatur oleh JS */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+}
+.game-item-alt {
+    display: flex; 
+    align-items: center;
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 2px solid transparent;
+    height: 100px; 
+}
+.game-item-alt:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+}
+.game-item-alt img {
+    width: 80px; 
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px; 
+    flex-shrink: 0; 
+    margin-right: 15px;
+}
+.game-item-alt .game-info {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0; 
+}
+/* Override gaya title/description lama */
+.game-item-alt .game-title,
+.game-item-alt .game-description {
+    position: static; 
+    text-shadow: none;
+    opacity: 1; 
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-
-/* NOTE: Kelas .game-description-2 sudah dihapus dari sini. */
-
-
-/* Munculkan Judul dan Deskripsi saat hover */
-.game-item:hover .game-title,
-.game-item:hover .game-description,
-.game-item:hover::before {
-    opacity: 1;
+.game-item-alt .game-title {
+    font-size: 16px; 
+    font-weight: 700; 
+    margin-bottom: 5px;
+}
+.game-item-alt .game-description {
+    font-size: 12px; 
+    color: #ccc;
 }
 
-/* Efek sedikit zoom pada gambar saat hover */
-.game-item:hover img {
-    transform: scale(1.05);
-}
 
-/* Tombol Load More */
-.load-more {
-    width: 100%;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.3);
-    padding: 10px 0;
-    border-radius: 10px;
-    margin-top: 15px;
-    cursor: pointer;
-    font-weight: 700;
-    backdrop-filter: blur(8px);
+/* LOAD MORE & ANIMASI */
+.load-more { 
+  display: block; 
+  width: 100%; 
+  max-width: 200px; 
+  margin: 30px auto; 
+  padding: 12px; 
+  background: var(--border); 
+  color: white; 
+  border: none; 
+  border-radius: 8px; 
+  cursor: pointer; 
 }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.game-item.animate-show, .game-item-alt.animate-show { animation: fadeInUp 0.6s forwards; opacity: 0; }
 
-.load-more:hover {
-    background: rgba(255,255,255,0.25);
-}
 
-/* Modifikasi agar terlihat seperti teks saat class 'text-mode' ada */
-.load-more.text-mode {
-    background: transparent; /* Hapus background */
-    color: var(--text); /* Gunakan warna teks standar */
-    border: none; /* Hapus border */
-    padding: 10px 0; /* Kurangi padding */
-    text-align: center; /* Pastikan di tengah */
-    text-decoration: none; /* <<< DIUBAH: HILANGKAN GARIS BAWAH */
+/* =========================================
+   MEDIA QUERIES (LOGIKA HP & TABLET)
+   ========================================= */
+
+@media (max-width: 768px) {
     
-    /* Reset hover untuk mode teks */
-    backdrop-filter: none;
-}
-
-.load-more.text-mode:hover {
-    background: transparent;
-    color: var(--text); 
-    opacity: 0.8;
-}
-
-/* Light Mode Fix */
-body:not(.dark) .game-item.active {
-    border-color: #eac544;
-    box-shadow: 0 0 15px #eac544;
-}
-
-body:not(.dark) .load-more {
-    background: rgba(0,0,0,0.15);
-    color: #000;
-    border-color: rgba(0,0,0,0.25);
-}
-
-body:not(.dark) .load-more.text-mode {
-    color: #000 !important;
+    .navbar { 
+      padding: 0 15px;
+      height: 60px; 
     }
+    .logo { 
+      font-size: 18px; 
+      position: relative;
+      z-index: 600; 
+    }
+    .search { 
+      flex: 1; 
+      margin: 0 5px; 
+      justify-content: flex-end; 
+    }
+
+    /* Fix Search Bar */
+    .search.active input {
+        position: absolute; 
+        top: 50%; 
+        transform: translateY(-50%); 
+        z-index: 500;
+        left: 5px; /* Lebar search */
+        right: 50px; 
+        width: auto; 
+        padding: 6px 12px; 
+        opacity: 1; 
+        pointer-events: auto;
+    }
+    
+    .hamburger { 
+      display: flex; 
+      z-index: 3001; 
+    }
+    .hamburger.active span:nth-child(1) { 
+      transform: translateY(8.5px) rotate(45deg); 
+    }
+    .hamburger.active span:nth-child(2) { 
+      opacity: 0; 
+    }
+    .hamburger.active span:nth-child(3) { 
+      transform: translateY(-8.5px) rotate(-45deg); 
+    }
+
+    .nav-menu {
+        position: fixed; 
+        top: 60px; 
+        right: -100%; 
+        width: 70%; 
+        height: calc(100vh - 60px); 
+        background: rgba(20, 20, 20, 0.90);
+        backdrop-filter: blur(15px); 
+        flex-direction: column; 
+        align-items: flex-start; 
+        padding: 30px; 
+        transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 1px solid var(--border); 
+        box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+    }
+    .nav-menu.active { 
+      right: 0; 
+      
+    }
+    .nav-link { 
+    font-size: 18px; 
+    padding: 15px 0; 
+    width: 100%; 
+    border-bottom: 1px solid var(--border); 
+      
+    }
+    .nav-link::after { 
+      display: none; 
+      
+    } 
+
+    .jumbotron-slider { 
+      margin-top: 70px; 
+      aspect-ratio: 14/6;
+      width: 100%; 
+      border-radius: 0; 
+    }
+      
+    .game-grid { 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 10px; 
+    }
+
+    /* Penyesuaian GAYA BARU di mobile */
+    .game-grid-alt { 
+      grid-template-columns: 1fr; 
+    }
+    .game-item-alt { 
+      height: 80px; 
+      padding: 8px; 
+    }
+    .game-item-alt img { 
+      width: 60px; 
+      height: 60px; 
+      margin-right: 10px;
+    }
+    .game-item-alt .game-title { 
+      font-size: 14px; 
+      
+    }
+    .game-item-alt .game-description { 
+      font-size: 11px; 
+      
+    }
+}
