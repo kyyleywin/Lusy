@@ -39,6 +39,14 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+          var link = document.querySelector("link[rel~='icon']");
+            if (!link) {
+                link = document.createElement('link');
+                link.rel = 'icon';
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+            link.href = 'https://cdn.discordapp.com/attachments/1440347537172201492/1441069517546717314/IMG_20251120_211532.png?ex=69207412&is=691f2292&hm=0e86ea3065bb3d8a6ebd04e570ab245d4e9c1c61a6f5259f6fb247a632d9f49e&';
+          
             const params = new URLSearchParams(window.location.search);
             const catParam = params.get('category');
             const prodParam = params.get('product');
