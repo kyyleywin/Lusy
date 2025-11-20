@@ -176,7 +176,7 @@ body {
   min-width: 100%; 
   height: 100%; 
   object-fit: cover; 
-  cursor: pointer; /* Agar terlihat bisa diklik */
+  cursor: pointer; 
 }
 
 .category-slider { 
@@ -227,7 +227,7 @@ body {
 }
 
 /* =========================================
-   4. GAME GRID (PRODUK)
+   4. GAME GRID (PRODUK HOMEPAGE)
    ========================================= */
 .game-section { 
   width: 100%; 
@@ -236,7 +236,7 @@ body {
   margin: 0 auto; 
 }
 
-/* GRID DEFAULT (Untuk Testimoni - Kotak) */
+/* GRID DEFAULT (Kotak) */
 .game-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -279,7 +279,7 @@ body {
 .game-item:hover::before { opacity: 1; }
 .game-item:hover img { transform: scale(1.05); }
 
-/* GRID ALTERNATIF (Untuk Ikan & Akun - List Memanjang) */
+/* GRID ALTERNATIF (List Memanjang) */
 .game-grid-alt {
     display: none; 
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -374,7 +374,7 @@ body {
    6. HALAMAN DETAIL PRODUK (detail.html)
    ========================================= */
 
-/* Spacer agar konten tidak tertutup navbar fixed */
+/* Spacer */
 .detail-page-spacer { height: 70px; width: 100%; }
 
 /* Header Wrapper */
@@ -390,39 +390,37 @@ body {
     opacity: 0.5; filter: blur(3px); 
 }
 
-/* Container Foto & Teks (PENTING: Flex Row agar sejajar) */
+/* Container Foto & Teks */
 .detail-info-container {
     max-width: 1000px;
-    margin: -50px auto 0; /* Menarik konten ke atas menimpa banner */
+    margin: -50px auto 0;
     padding: 0 20px;
     position: relative;
     z-index: 2;
-    
-    /* MEMBUAT SEJAJAR (KIRI - KANAN) */
     display: flex;
     flex-direction: row; 
     align-items: flex-end; 
     gap: 20px; 
 }
 
-/* Foto Produk (Kiri) */
+/* Foto Produk */
 .detail-thumb {
     width: 100px; height: 100px;
     border-radius: 15px; overflow: hidden;
     border: 3px solid var(--accent); background: #000;
     box-shadow: 0 5px 15px rgba(0,0,0,0.6);
     flex-shrink: 0; 
+    position: relative;
 }
 .detail-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Teks (Kanan) */
+/* Teks Header */
 .detail-text {
     flex: 1; 
     color: #fff; padding-bottom: 5px; 
     text-shadow: 0 2px 4px rgba(0,0,0,0.9); 
     text-align: left; 
 }
-
 .detail-publisher {
     font-size: 12px; color: var(--accent); font-weight: 700;
     text-transform: uppercase; margin-bottom: 2px;
@@ -462,28 +460,51 @@ body {
     background: var(--accent); color: #000; box-shadow: 0 0 10px rgba(243, 203, 81, 0.2);
 }
 
-/* Content Area */
+/* Content Area & Form */
 .detail-content { max-width: 1000px; margin: 0 auto 50px; padding: 0 20px; }
 .tab-pane {
     display: none; background: #151515; border: 1px solid rgba(255,255,255,0.1);
     padding: 20px; border-radius: 12px; animation: fadeIn 0.4s ease;
 }
 .tab-pane.active { display: block; }
-.tab-pane h3 { color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-
-/* Form Elements */
+.tab-pane h3 { color: var(--accent); margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0;}
 .form-group { margin-bottom: 15px; }
 .form-group label { display: block; color: #fff; margin-bottom: 5px; font-size: 14px; }
 .form-control { width: 100%; background: #0f0f0f; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; }
 .btn-process { width: 100%; padding: 14px; background: var(--accent); font-weight: bold; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; }
+.btn-process:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* GRID ITEM DI HALAMAN DETAIL (PAKET) */
+.detail-item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 25px;
+}
+.detail-item-card {
+    background: #222; border: 2px solid transparent; border-radius: 10px;
+    padding: 10px; display: flex; align-items: center; cursor: pointer;
+    transition: 0.2s; position: relative; overflow: hidden;
+}
+.detail-item-card img {
+    width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right: 15px;
+}
+.detail-item-info { flex: 1; }
+.detail-item-title { font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 3px; }
+.detail-item-price { font-size: 12px; color: var(--accent); }
+.detail-item-stock { font-size: 10px; color: #888; margin-top: 2px; }
+
+.detail-item-card.selected { border-color: var(--accent); background: rgba(243, 203, 81, 0.1); }
+.detail-item-card.sold-out { opacity: 0.5; cursor: not-allowed; border-color: #444; filter: grayscale(100%); }
+.sold-out-badge {
+    position: absolute; right: 10px; top: 10px; font-size: 10px;
+    background: red; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;
+}
 
 /* =========================================
-   7. STYLING KETERANGAN / DESKRIPSI BARU
+   7. STYLING KETERANGAN / DESKRIPSI
    ========================================= */
 .desc-container { display: flex; flex-direction: column; gap: 20px; }
-
-/* Kotak Info */
 .desc-box {
     background: rgba(255,255,255,0.03); border-left: 4px solid var(--accent);
     padding: 15px 20px; border-radius: 0 8px 8px 0;
@@ -495,7 +516,6 @@ body {
 .desc-header i { color: var(--accent); }
 .desc-text { font-size: 14px; color: #ccc; line-height: 1.6; margin: 0; }
 
-/* Step List */
 .step-list { list-style: none; padding: 0; margin: 0; }
 .step-item { display: flex; gap: 15px; margin-bottom: 15px; }
 .step-number {
@@ -505,7 +525,6 @@ body {
 }
 .step-content { font-size: 14px; color: #ddd; line-height: 1.5; }
 
-/* Warning Box */
 .warning-box {
     background: rgba(255, 80, 80, 0.1); border: 1px solid rgba(255, 80, 80, 0.3);
     border-radius: 10px; padding: 15px; display: flex; gap: 15px; align-items: start;
@@ -552,27 +571,22 @@ body {
     .game-item-alt .game-title { font-size: 14px; }
     .game-item-alt .game-description { font-size: 11px; }
 
-    /* DETAIL PAGE MOBILE (TETAP SEJAJAR / ROW) */
+    /* DETAIL PAGE MOBILE */
     .detail-banner { height: 130px; }
-
     .detail-info-container {
         flex-direction: row; /* Tetap baris, jangan kolom */
-        align-items: center; /* Rata tengah secara vertikal */
+        align-items: center; 
         margin-top: -40px; 
         text-align: left; 
         gap: 15px;
     }
-
-    .detail-thumb {
-        width: 85px; 
-        height: 85px;
-        border-width: 2px;
-    }
-
+    .detail-thumb { width: 85px; height: 85px; border-width: 2px; }
     .detail-title { font-size: 18px; margin-bottom: 3px; }
     .detail-subtitle { font-size: 12px; -webkit-line-clamp: 2; }
     .detail-publisher { font-size: 11px; }
-
     .detail-features { gap: 8px; }
     .feature-box { padding: 8px 5px; }
+    
+    /* Grid Item Paket di HP jadi 1 kolom agar mudah diklik */
+    .detail-item-grid { grid-template-columns: 1fr; }
 }
