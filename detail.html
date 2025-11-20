@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Produk - PunyaAing Store</title>
+    
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">PunyaAing Store</div>
+        <a href="index.html" class="nav-link" style="font-size: 14px; display: flex; align-items: center; gap: 5px;">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+    </nav>
+
+    <div class="detail-page-spacer"></div>
+
+    <div id="appDetail">
+        <div style="text-align: center; padding: 80px; color: #666;">
+            <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--accent);"></i>
+            <br><br>
+            <p>Sedang memuat data produk...</p>
+        </div>
+    </div>
+
+    <script src="lib/ikan/ikan.js"></script>
+    <script src="lib/akun/akun.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const catParam = params.get('category');
+            const prodParam = params.get('product');
+            const container = document.getElementById('appDetail');
+
+            let productData = null;
+            let db = [];
+
+            if (catParam === 'ikan' && typeof dataIkan !== 'undefined') db = dataIkan;
+            else if (catParam === 'akun' && typeof dataAkun !== 'undefined') db = dataAkun;
+
+            if (db.length > 0 && prodParam) {
+                productData = db.find(p => p.title === decodeURIComponent(prodParam));
+            }
+
+            if (productData) {
+                renderDetail(productData, catParam);
+            } else {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:50px; color:#fff;">
+                        <h2>Produk Tidak Ditemukan</h2>
+                        <a href="index.html" style="color:var(--accent)">Kembali ke Home</a>
+                    </div>`;
+            }
+        });
+
+        function renderDetail(item, category) {
+            const container = document.getElementById('appDetail');
+            const publisher = category === 'ikan' ? 'IKAN FISH IT' : 'AKUN FISH IT';
+            
+            // --- LOGIKA STOCK MANUAL ---
+            // Jika stock tidak ditulis di data.js, default ke 99 (Ready)
+            const currentStock = item.stock !== undefined ? item.stock : 99;
+            
+            let stockDisplay = '';
+            let stockColor = '';
+            let isSoldOut = false;
+
+            if (currentStock <= 0) {
+                stockDisplay = "SOLD OUT";
+                stockColor = "#ff4444"; // Merah
+                isSoldOut = true;
+            } else {
+                stockDisplay = `Sisa Stok: ${currentStock}`;
+                stockColor = "var(--accent)"; // Emas/Kuning
+            }
+
+            container.innerHTML = `
+                <div class="detail-header">
+                    <div class="detail-banner">
+                        <img src="${item.img}" alt="Banner">
+                    </div>
+                    <div class="detail-info-container">
+                        <div class="detail-thumb">
+                            <img src="${item.img}" alt="Thumb">
+                            ${isSoldOut ? '<div style="position:absolute; inset:0; background:rgba(0,0,0,0.7); color:red; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px;">HABIS</div>' : ''}
+                        </div>
+                        <div class="detail-text">
+                            <div class="detail-publisher">${publisher}</div>
+                            <h1 class="detail-title">${item.title}</h1>
+                            <div class="detail-subtitle">${item.desc}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-features">
+                    <div class="feature-box">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="feature-text">Proses Kilat</div>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="feature-text">100% Aman</div>
+                    </div>
+                    
+                    <div class="feature-box" style="border-color: ${stockColor};">
+                        <div class="feature-icon" style="color: ${stockColor};">
+                            <i class="fas ${isSoldOut ? 'fa-times-circle' : 'fa-cubes'}"></i>
+                        </div>
+                        <div class="feature-text" style="color: ${stockColor}; font-weight:bold;">
+                            ${stockDisplay}
+                        </div>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="feature-icon"><i class="fas fa-tags"></i></div>
+                        <div class="feature-text">Termurah</div>
+                    </div>
+                </div>
+
+                <div class="detail-tabs">
+                    <button class="tab-btn active" onclick="switchTab('transaksi', this)">Transaksi</button>
+                    <button class="tab-btn" onclick="switchTab('keterangan', this)">Keterangan</button>
+                </div>
+
+                <div class="detail-content">
+                    
+                    <div id="tab-transaksi" class="tab-pane active">
+                        <h3><i class="fas fa-shopping-cart"></i> Formulir Pemesanan</h3>
+                        
+                        <form onsubmit="kirimPesanan(event, '${item.title}', '${category}')">
+                            
+                            ${category === 'ikan' ? `
+                                <div class="form-group">
+                                    <label>User ID & Zone ID</label>
+                                    <input type="text" class="form-control" placeholder="Contoh: 12345678 (1234)" ${isSoldOut ? 'disabled' : 'required'}>
+                                </div>
+                            ` : `
+                                <div class="form-group">
+                                    <label>Email / No.HP</label>
+                                    <input type="text" class="form-control" placeholder="Email atau WhatsApp aktif" ${isSoldOut ? 'disabled' : 'required'}>
+                                </div>
+                            `}
+
+                            <div class="form-group">
+                                <label>Pilih Nominal / Item</label>
+                                <select class="form-control" id="nominalSelect" ${isSoldOut ? 'disabled' : ''}>
+                                    <option value="">-- Pilih Item --</option>
+                                    <option value="Paket Hemat">Paket Hemat (Rp 15.000)</option>
+                                    <option value="Paket Sultan">Paket Sultan (Rp 50.000)</option>
+                                    <option value="Paket Ultimate">Paket Ultimate (Rp 100.000)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Metode Pembayaran</label>
+                                <select class="form-control" id="paymentSelect" ${isSoldOut ? 'disabled' : ''}>
+                                    <option value="QRIS">QRIS (All Payment)</option>
+                                    <option value="DANA">DANA</option>
+                                    <option value="GoPay">GoPay</option>
+                                    <option value="BCA">Transfer Bank (BCA)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn-process" 
+                                style="${isSoldOut ? 'background:#444; color:#888; cursor:not-allowed;' : ''}"
+                                ${isSoldOut ? 'disabled' : ''}>
+                                <i class="fab fa-whatsapp"></i> ${isSoldOut ? 'STOK HABIS' : 'Beli Sekarang'}
+                            </button>
+
+                        </form>
+                    </div>
+
+                    <div id="tab-keterangan" class="tab-pane">
+                        <div class="desc-container">
+                            <div class="desc-box">
+                                <div class="desc-header"><i class="fas fa-info-circle"></i> Tentang Produk</div>
+                                <p class="desc-text">
+                                    Ini adalah halaman resmi pembelian <strong>${item.title}</strong>. 
+                                    ${isSoldOut ? '<br><span style="color:red; font-weight:bold;">MOHON MAAF, STOK SAAT INI SEDANG KOSONG.</span>' : 'Stok tersedia dan siap dikirim.'}
+                                </p>
+                            </div>
+                            <div class="desc-section">
+                                <div class="desc-header" style="padding-left:5px;"><i class="fas fa-list-ol"></i> Cara Order</div>
+                                <ul class="step-list">
+                                    <li class="step-item"><div class="step-number">1</div><div class="step-content">Masukkan Data Akun / ID.</div></li>
+                                    <li class="step-item"><div class="step-number">2</div><div class="step-content">Pilih Nominal Item.</div></li>
+                                    <li class="step-item"><div class="step-number">3</div><div class="step-content">Klik Beli Sekarang.</div></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            `;
+        }
+
+        function switchTab(tabName, btnElement) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            btnElement.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        function kirimPesanan(e, productName, category) {
+            e.preventDefault();
+            const nominal = document.getElementById('nominalSelect').value || 'Belum Pilih';
+            const payment = document.getElementById('paymentSelect').value;
+            const adminNumber = "6289677216812"; 
+            
+            const text = `Halo Admin PunyaAing,%0A%0ASaya mau order:%0A` +
+                         `• Produk: *${productName}* (${category})%0A` +
+                         `• Item: ${nominal}%0A` +
+                         `• Bayar via: ${payment}%0A%0A` +
+                         `Mohon diproses ya min.`;
+
+            window.open(`https://wa.me/${adminNumber}?text=${text}`, '_blank');
+        }
+    </script>
+</body>
+</html>

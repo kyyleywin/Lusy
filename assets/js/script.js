@@ -20,23 +20,14 @@ function toggleMenu() {
 if (hamburger) hamburger.addEventListener("click", toggleMenu);
 if (overlay) overlay.addEventListener("click", toggleMenu);
 
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-        if (hamburger) {
-            hamburger.classList.remove("active");
-            navMenu.classList.remove("active");
-            overlay.classList.remove("active");
-        }
-    });
-});
-
+// Toggle Search Box
 if (searchIcon) {
     searchIcon.addEventListener('click', () => {
         searchContainer.classList.toggle('active');
         if (searchContainer.classList.contains('active')) {
             searchInput.focus();
         } else {
-            searchInput.value = "";
+            searchInput.value = ""; // Reset saat ditutup
             searchInput.blur();
         }
     });
@@ -59,6 +50,15 @@ if (slides.length > 0) {
     setInterval(showSlides, 3000);
 }
 
+// Fungsi tambahan: Klik slide untuk pindah kategori (Sesuai HTML index.html Anda)
+function selectCategoryFromSlide(categoryName) {
+    const targetBtn = document.querySelector(`.category-item[data-category="${categoryName}"]`);
+    if (targetBtn) {
+        // Trigger klik pada tombol kategori
+        targetBtn.click();
+    }
+}
+
 // =========================================
 // 3. LIGHTBOX / PREVIEW VARIABLES
 // =========================================
@@ -79,6 +79,7 @@ const maxShowInitial = 6;
 let currentCategory = 'ikan'; 
 let isShowingAll = false;
 
+// Mapping Data (Pastikan file data.js sudah diload di HTML)
 const database = {
     ikan: typeof dataIkan !== 'undefined' ? dataIkan : [],
     akun: typeof dataAkun !== 'undefined' ? dataAkun : [],
@@ -86,12 +87,16 @@ const database = {
     testimoni: typeof dataTestimoni !== 'undefined' ? dataTestimoni : []
 };
 
-const altLayoutCategories = ['ikan', 'akun', 'pay']; 
-const gridStandard = document.getElementById('gameGrid');
-const gridAlt = document.getElementById('gameGridAlt');
+// Konfigurasi Layout
+const altLayoutCategories = ['ikan', 'akun', 'pay']; // Tampilan List
+const gridStandard = document.getElementById('gameGrid'); // Tampilan Kotak
+const gridAlt = document.getElementById('gameGridAlt'); // Tampilan List
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 const categoryItems = document.querySelectorAll('.category-item');
 
+/**
+ * Fungsi Utama Render
+ */
 function renderGames(category, searchTerm = "") {
     currentCategory = category;
     
@@ -108,7 +113,7 @@ function renderGames(category, searchTerm = "") {
         return item.title.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-    // Simpan list testimoni yang sedang tampil untuk Lightbox
+    // Simpan list untuk Lightbox (Next/Prev)
     if(category === 'testimoni') {
         currentTestiList = filteredItems;
     }
@@ -128,6 +133,7 @@ function renderGames(category, searchTerm = "") {
         gridStandard.style.display = 'grid';
     }
 
+    // Tentukan item yang muncul
     const itemsToShow = (isShowingAll || searchTerm !== "") 
                         ? filteredItems 
                         : filteredItems.slice(0, maxShowInitial);
@@ -138,14 +144,13 @@ function renderGames(category, searchTerm = "") {
         return;
     }
 
-    // 5. GENERATE HTML MENGGUNAKAN createElement
+    // 5. GENERATE HTML
     itemsToShow.forEach((item, index) => {
-        // Hitung delay animasi
         const animDelay = index * 0.05; 
         const card = document.createElement('div');
 
         if (isAltLayout) {
-            // Tampilan LIST (Ikan, Akun, Pay)
+            // --- TAMPILAN LIST (Ikan, Akun, Pay) ---
             card.className = 'game-item-alt animate-show';
             card.style.animationDelay = `${animDelay}s`;
             card.innerHTML = `
@@ -154,8 +159,20 @@ function renderGames(category, searchTerm = "") {
                     <div class="game-title">${item.title}</div>
                     <div class="game-description">${item.desc}</div>
                 </div>`;
+            
+            // === [UPDATE PENTING] ===
+            // LOGIKA KLIK: HANYA IKAN & AKUN YANG BUKA TAB BARU
+            if (['ikan', 'akun'].includes(category)) {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    // Membuka detail.html dengan parameter kategori & produk
+                    const targetUrl = `detail.html?category=${category}&product=${encodeURIComponent(item.title)}`;
+                    window.open(targetUrl, '_blank');
+                });
+            }
+            
         } else {
-            // Tampilan KOTAK (Testimoni)
+            // --- TAMPILAN KOTAK (Testimoni) ---
             card.className = 'game-item animate-show';
             card.style.animationDelay = `${animDelay}s`;
             card.innerHTML = `
@@ -163,9 +180,10 @@ function renderGames(category, searchTerm = "") {
                 <div class="game-title">${item.title}</div>
                 <div class="game-description">${item.desc}</div>`;
             
-            // FITUR BARU: KLIK UNTUK PREVIEW (Hanya Testimoni)
+            // FITUR: KLIK PREVIEW (Hanya Testimoni)
             if (category === 'testimoni') {
                 card.style.cursor = 'zoom-in';
+                card.title = "Klik untuk memperbesar";
                 card.addEventListener('click', () => {
                     openLightbox(index);
                 });
@@ -184,21 +202,21 @@ function renderGames(category, searchTerm = "") {
 }
 
 // =========================================
-// 5. FUNGSI LIGHTBOX LOGIC
+// 5. FUNGSI LIGHTBOX (PREVIEW FOTO)
 // =========================================
 function openLightbox(index) {
     currentTestiIndex = index; 
     updateLightboxContent();
     if(lightbox) {
         lightbox.style.display = "flex";
-        document.body.style.overflow = "hidden"; // Matikan scroll website
+        document.body.style.overflow = "hidden"; // Matikan scroll body
     }
 }
 
 function closeLightboxFunc() {
     if(lightbox) {
         lightbox.style.display = "none";
-        document.body.style.overflow = "auto"; // Hidupkan scroll website
+        document.body.style.overflow = "auto"; // Hidupkan scroll body
     }
 }
 
@@ -212,13 +230,13 @@ function updateLightboxContent() {
 
 function nextImage() {
     currentTestiIndex++;
-    if (currentTestiIndex >= currentTestiList.length) currentTestiIndex = 0;
+    if (currentTestiIndex >= currentTestiList.length) currentTestiIndex = 0; // Loop ke awal
     updateLightboxContent();
 }
 
 function prevImage() {
     currentTestiIndex--;
-    if (currentTestiIndex < 0) currentTestiIndex = currentTestiList.length - 1;
+    if (currentTestiIndex < 0) currentTestiIndex = currentTestiList.length - 1; // Loop ke akhir
     updateLightboxContent();
 }
 
@@ -226,10 +244,9 @@ function prevImage() {
 if(closeLightbox) closeLightbox.addEventListener('click', closeLightboxFunc);
 if(nextBtnLb) nextBtnLb.addEventListener('click', nextImage);
 if(prevBtnLb) prevBtnLb.addEventListener('click', prevImage);
-
 if(lightbox) {
     lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightboxFunc();
+        if (e.target === lightbox) closeLightboxFunc(); // Tutup jika klik area gelap
     });
 }
 
@@ -243,8 +260,47 @@ document.addEventListener('keydown', (e) => {
 });
 
 // =========================================
-// 6. EVENT LISTENERS UMUM
+// 6. EVENT LISTENERS & SINKRONISASI NAVBAR
 // =========================================
+
+// A. Sinkronisasi Navbar Atas dengan Kategori
+const navLinks = document.querySelectorAll('.nav-link[data-nav-cat]');
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetCategory = link.getAttribute('data-nav-cat');
+
+        // 1. Render ulang
+        renderGames(targetCategory);
+        
+        // 2. Reset state
+        isShowingAll = false;
+        if(searchInput) searchInput.value = '';
+
+        // 3. Sinkronisasi Tombol Slider Kategori di bawah
+        categoryItems.forEach(btn => {
+            if (btn.getAttribute('data-category') === targetCategory) {
+                btn.classList.add('active');
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // 4. Scroll ke konten
+        const gameSection = document.querySelector('.game-section');
+        if(gameSection) gameSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // 5. Tutup menu mobile
+        if (hamburger && navMenu && overlay) {
+            hamburger.classList.remove("active");
+            navMenu.classList.remove("active");
+            overlay.classList.remove("active");
+        }
+    });
+});
+
+// B. Klik Tombol Slider Kategori
 categoryItems.forEach(btn => {
     btn.addEventListener('click', () => {
         categoryItems.forEach(b => b.classList.remove('active'));
@@ -255,6 +311,7 @@ categoryItems.forEach(btn => {
     });
 });
 
+// C. Klik Tombol Load More
 if (loadMoreBtn) {
     loadMoreBtn.addEventListener('click', () => {
         isShowingAll = !isShowingAll;
@@ -266,12 +323,14 @@ if (loadMoreBtn) {
     });
 }
 
+// D. Search Input
 if (searchInput) {
     searchInput.addEventListener('keyup', (e) => {
         renderGames(currentCategory, e.target.value);
     });
 }
 
+// E. Scroll Horizontal Kategori
 const catWrapper = document.querySelector(".category-wrapper");
 const leftBtn = document.querySelector(".left-btn");
 const rightBtn = document.querySelector(".right-btn");
