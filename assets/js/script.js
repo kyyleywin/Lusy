@@ -1,5 +1,5 @@
 // =========================================
-// 1. NAVIGATION LOGIC (TIDAK BERUBAH)
+// 1. NAVIGASI & UI INTERACTION
 // =========================================
 const hamburger = document.getElementById("hamburger");
 const navMenu = document.getElementById("navMenu");
@@ -8,222 +8,282 @@ const searchContainer = document.getElementById("searchContainer");
 const searchIcon = document.getElementById("searchIcon");
 const searchInput = document.getElementById("searchInput");
 
+// Toggle Hamburger Menu
 function toggleMenu() {
-    hamburger.classList.toggle("active");
-    navMenu.classList.toggle("active"); 
-    overlay.classList.toggle("active");
+    if (hamburger && navMenu && overlay) {
+        hamburger.classList.toggle("active");
+        navMenu.classList.toggle("active");
+        overlay.classList.toggle("active");
+    }
 }
 
-if(hamburger) { hamburger.addEventListener("click", toggleMenu); }
-if(overlay) { overlay.addEventListener("click", toggleMenu); }
+if (hamburger) hamburger.addEventListener("click", toggleMenu);
+if (overlay) overlay.addEventListener("click", toggleMenu);
 
 document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
-        hamburger.classList.remove("active");
-        navMenu.classList.remove("active");
-        overlay.classList.remove("active");
+        if (hamburger) {
+            hamburger.classList.remove("active");
+            navMenu.classList.remove("active");
+            overlay.classList.remove("active");
+        }
     });
 });
 
-// 1B. SEARCH TOGGLE LOGIC
-if (searchIcon && searchContainer && searchInput) {
-    searchIcon.addEventListener('click', function() {
+if (searchIcon) {
+    searchIcon.addEventListener('click', () => {
         searchContainer.classList.toggle('active');
         if (searchContainer.classList.contains('active')) {
             searchInput.focus();
         } else {
+            searchInput.value = "";
             searchInput.blur();
         }
     });
-
-    document.addEventListener('click', function(e) {
-        if (!searchContainer.contains(e.target) && searchContainer.classList.contains('active')) {
-            searchContainer.classList.remove('active');
-        }
-    });
 }
 
-
 // =========================================
-// 2. SLIDER JUMBOTRON (TIDAK BERUBAH)
+// 2. JUMBOTRON SLIDER
 // =========================================
 let slideIndex = 0;
-const slidesContainer = document.querySelector('.jumbotron-slider .slides');
-const slides = document.querySelectorAll('.jumbotron-slider .slide');
+const slidesContainer = document.querySelector('.slides');
+const slides = document.querySelectorAll('.slide');
 
 if (slides.length > 0) {
     const totalSlides = slides.length;
-    const originalSlidesCount = totalSlides - 1; 
-
     function showSlides() {
         slideIndex++;
-        slidesContainer.style.transition = 'transform 0.5s ease-in-out';
-        slidesContainer.style.transform = `translateX(-${slideIndex * 100}%)`;
-
-        if (slideIndex >= originalSlidesCount) {
-            setTimeout(() => {
-                slidesContainer.style.transition = 'none';
-                slideIndex = 0;
-                slidesContainer.style.transform = `translateX(0)`;
-            }, 500);
-        }
+        if (slideIndex >= totalSlides) slideIndex = 0;
+        if(slidesContainer) slidesContainer.style.transform = `translateX(-${slideIndex * 100}%)`;
     }
-    setInterval(showSlides, 3000); 
+    setInterval(showSlides, 3000);
 }
 
 // =========================================
-// 3. GAME FILTER & SEARCH (LOGIKA DUA GRID BARU)
+// 3. LIGHTBOX / PREVIEW VARIABLES
 // =========================================
-const gameGrid = document.getElementById("gameGrid"); // Grid lama (pay, testi)
-const gameGridAlt = document.getElementById("gameGridAlt"); // Grid baru (ikan, akun)
-const loadMoreBtn = document.getElementById("loadMoreBtn");
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxCaption = document.getElementById('lightboxCaption');
+const closeLightbox = document.querySelector('.close-lightbox');
+const prevBtnLb = document.querySelector('.prev-btn-lb');
+const nextBtnLb = document.querySelector('.next-btn-lb');
+
+let currentTestiIndex = 0; 
+let currentTestiList = []; 
+
+// =========================================
+// 4. LOGIKA RENDER DATA (INTI APLIKASI)
+// =========================================
 const maxShowInitial = 6; 
-
-// Tambahkan kategori yang menggunakan GAYA BARU di sini
-const altCategories = ['ikan', 'akun', 'pay']; 
-
-// Ambil semua item dari KEDUA grid
-const allGameItems = Array.from(document.querySelectorAll('.game-item, .game-item-alt'));
-
-// Sort A-Z 
-allGameItems.sort((a, b) => {
-    const tA = a.querySelector('.game-title').textContent.trim().toLowerCase();
-    const tB = b.querySelector('.game-title').textContent.trim().toLowerCase();
-    return tA.localeCompare(tB);
-});
-
-// Kosongkan kedua grid dan isi ulang setelah sorting
-gameGrid.innerHTML = '';
-gameGridAlt.innerHTML = '';
-allGameItems.forEach(item => {
-    if (altCategories.includes(item.getAttribute('data-category'))) {
-        gameGridAlt.appendChild(item); // Pindahkan Ikan & Akun ke grid Alt
-    } else {
-        gameGrid.appendChild(item); // Pindahkan sisanya ke grid Lama
-    }
-});
-
 let currentCategory = 'ikan'; 
 let isShowingAll = false;
 
-function filterGames(category) {
-    currentCategory = category;
-    isShowingAll = false;
-    if(searchInput) searchInput.value = "";
+const database = {
+    ikan: typeof dataIkan !== 'undefined' ? dataIkan : [],
+    akun: typeof dataAkun !== 'undefined' ? dataAkun : [],
+    pay: typeof dataPay !== 'undefined' ? dataPay : [],
+    testimoni: typeof dataTestimoni !== 'undefined' ? dataTestimoni : []
+};
 
-    let targetGrid;
-    let targetItems;
-    let displayStyle;
+const altLayoutCategories = ['ikan', 'akun', 'pay']; 
+const gridStandard = document.getElementById('gameGrid');
+const gridAlt = document.getElementById('gameGridAlt');
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+const categoryItems = document.querySelectorAll('.category-item');
+
+function renderGames(category, searchTerm = "") {
+    currentCategory = category;
     
-    // 1. Tentukan grid mana yang aktif
-    if (altCategories.includes(category)) { // Jika kategori adalah Ikan atau Akun
-        gameGrid.style.display = 'none';
-        gameGridAlt.style.display = 'grid';
-        targetGrid = gameGridAlt;
-        targetItems = Array.from(gameGridAlt.children);
-        displayStyle = 'flex'; // Item Ikan & Akun menggunakan display: flex
-    } else { // Kategori lain (Payment, Testimoni)
-        gameGridAlt.style.display = 'none';
-        gameGrid.style.display = 'grid';
-        targetGrid = gameGrid;
-        targetItems = Array.from(gameGrid.children);
-        displayStyle = 'block'; // Item lain menggunakan display: block
+    // 1. AMBIL DATA
+    let items = [...(database[category] || [])];
+
+    // 2. SORTING ABJAD (Khusus Ikan & Akun)
+    if (['ikan', 'akun'].includes(category)) {
+        items.sort((a, b) => a.title.localeCompare(b.title));
     }
 
-    const visibleItems = targetItems.filter(item => item.getAttribute('data-category') === category);
-    
-    // 2. Sembunyikan semua item di grid yang aktif
-    targetItems.forEach(item => item.style.display = 'none');
-
-    // 3. Tampilkan item yang sesuai
-    visibleItems.forEach((item, index) => {
-        item.classList.remove('animate-show');
-        if (index < maxShowInitial) {
-            item.style.display = displayStyle; 
-            void item.offsetWidth; 
-            item.classList.add('animate-show');
-            item.style.animationDelay = `${index * 0.05}s`;
-        }
-        item.classList.remove("active");
+    // 3. FILTER PENCARIAN
+    const filteredItems = items.filter(item => {
+        return item.title.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-    if (visibleItems.length > maxShowInitial) {
+    // Simpan list testimoni yang sedang tampil untuk Lightbox
+    if(category === 'testimoni') {
+        currentTestiList = filteredItems;
+    }
+
+    // 4. PERSIAPAN GRID
+    gridStandard.innerHTML = '';
+    gridAlt.innerHTML = '';
+    gridStandard.style.display = 'none';
+    gridAlt.style.display = 'none';
+
+    const isAltLayout = altLayoutCategories.includes(category);
+    const targetGrid = isAltLayout ? gridAlt : gridStandard;
+
+    if (isAltLayout) {
+        gridAlt.style.display = 'grid'; 
+    } else {
+        gridStandard.style.display = 'grid';
+    }
+
+    const itemsToShow = (isShowingAll || searchTerm !== "") 
+                        ? filteredItems 
+                        : filteredItems.slice(0, maxShowInitial);
+
+    if (itemsToShow.length === 0) {
+        targetGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #888;">Item tidak ditemukan</div>`;
+        loadMoreBtn.style.display = 'none';
+        return;
+    }
+
+    // 5. GENERATE HTML MENGGUNAKAN createElement
+    itemsToShow.forEach((item, index) => {
+        // Hitung delay animasi
+        const animDelay = index * 0.05; 
+        const card = document.createElement('div');
+
+        if (isAltLayout) {
+            // Tampilan LIST (Ikan, Akun, Pay)
+            card.className = 'game-item-alt animate-show';
+            card.style.animationDelay = `${animDelay}s`;
+            card.innerHTML = `
+                <img src="${item.img}" alt="${item.title}" loading="lazy">
+                <div class="game-info">
+                    <div class="game-title">${item.title}</div>
+                    <div class="game-description">${item.desc}</div>
+                </div>`;
+        } else {
+            // Tampilan KOTAK (Testimoni)
+            card.className = 'game-item animate-show';
+            card.style.animationDelay = `${animDelay}s`;
+            card.innerHTML = `
+                <img src="${item.img}" alt="${item.title}" loading="lazy">
+                <div class="game-title">${item.title}</div>
+                <div class="game-description">${item.desc}</div>`;
+            
+            // FITUR BARU: KLIK UNTUK PREVIEW (Hanya Testimoni)
+            if (category === 'testimoni') {
+                card.style.cursor = 'zoom-in';
+                card.addEventListener('click', () => {
+                    openLightbox(index);
+                });
+            }
+        }
+        targetGrid.appendChild(card);
+    });
+
+    // 6. ATUR TOMBOL LOAD MORE
+    if (filteredItems.length > maxShowInitial && searchTerm === "") {
         loadMoreBtn.style.display = 'block';
-        loadMoreBtn.textContent = 'Tampilkan Lebih Banyak';
+        loadMoreBtn.textContent = isShowingAll ? 'Lebih Sedikit' : 'Tampilkan Lebih Banyak';
     } else {
         loadMoreBtn.style.display = 'none';
     }
 }
 
-// Category Click
-document.querySelectorAll(".category-item").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelectorAll(".category-item").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        filterGames(btn.getAttribute('data-category'));
+// =========================================
+// 5. FUNGSI LIGHTBOX LOGIC
+// =========================================
+function openLightbox(index) {
+    currentTestiIndex = index; 
+    updateLightboxContent();
+    if(lightbox) {
+        lightbox.style.display = "flex";
+        document.body.style.overflow = "hidden"; // Matikan scroll website
+    }
+}
+
+function closeLightboxFunc() {
+    if(lightbox) {
+        lightbox.style.display = "none";
+        document.body.style.overflow = "auto"; // Hidupkan scroll website
+    }
+}
+
+function updateLightboxContent() {
+    const data = currentTestiList[currentTestiIndex];
+    if(data && lightboxImg) {
+        lightboxImg.src = data.img;
+        if(lightboxCaption) lightboxCaption.textContent = `${data.title} - ${data.desc}`;
+    }
+}
+
+function nextImage() {
+    currentTestiIndex++;
+    if (currentTestiIndex >= currentTestiList.length) currentTestiIndex = 0;
+    updateLightboxContent();
+}
+
+function prevImage() {
+    currentTestiIndex--;
+    if (currentTestiIndex < 0) currentTestiIndex = currentTestiList.length - 1;
+    updateLightboxContent();
+}
+
+// Event Listener Lightbox
+if(closeLightbox) closeLightbox.addEventListener('click', closeLightboxFunc);
+if(nextBtnLb) nextBtnLb.addEventListener('click', nextImage);
+if(prevBtnLb) prevBtnLb.addEventListener('click', prevImage);
+
+if(lightbox) {
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightboxFunc();
     });
-});
+}
 
-// Load More Click (Ditargetkan ke grid yang aktif)
-loadMoreBtn.addEventListener("click", () => {
-    // Tentukan grid yang aktif
-    const activeGrid = altCategories.includes(currentCategory) ? gameGridAlt : gameGrid;
-    const items = Array.from(activeGrid.children).filter(item => item.getAttribute('data-category') === currentCategory);
-    // Tentukan display style yang benar
-    const displayStyle = altCategories.includes(currentCategory) ? 'flex' : 'block';
-
-    if (!isShowingAll) {
-        items.forEach(item => { 
-            item.style.display = displayStyle; 
-            item.classList.add('animate-show'); 
-        });
-        loadMoreBtn.textContent = 'Lebih Sedikit';
-        isShowingAll = true;
-    } else {
-        items.forEach((item, i) => { 
-            if (i >= maxShowInitial) item.style.display = 'none'; 
-        });
-        loadMoreBtn.textContent = 'Tampilkan Lebih Banyak';
-        activeGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        isShowingAll = false;
+// Keyboard Navigation
+document.addEventListener('keydown', (e) => {
+    if (lightbox && lightbox.style.display === "flex") {
+        if (e.key === "ArrowRight") nextImage();
+        if (e.key === "ArrowLeft") prevImage();
+        if (e.key === "Escape") closeLightboxFunc();
     }
 });
 
-// Search Logic (Ditargetkan ke grid yang aktif)
-if(searchInput) {
-    searchInput.addEventListener("keyup", (e) => {
-        const term = e.target.value.toLowerCase();
-        
-        if (searchContainer.classList.contains('active')) {
-            const targetItems = altCategories.includes(currentCategory) ? Array.from(gameGridAlt.children) : Array.from(gameGrid.children);
-            const displayStyle = altCategories.includes(currentCategory) ? 'flex' : 'block';
+// =========================================
+// 6. EVENT LISTENERS UMUM
+// =========================================
+categoryItems.forEach(btn => {
+    btn.addEventListener('click', () => {
+        categoryItems.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        isShowingAll = false;
+        if(searchInput) searchInput.value = '';
+        renderGames(btn.getAttribute('data-category'));
+    });
+});
 
-            if (term === "") { filterGames(currentCategory); return; }
-
-            targetItems.forEach(item => {
-                const title = item.querySelector('.game-title').innerText.toLowerCase();
-                const isInCat = item.getAttribute('data-category') === currentCategory;
-
-                if (isInCat && title.includes(term)) {
-                    item.style.display = displayStyle;
-                    item.classList.remove('animate-show');
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-            loadMoreBtn.style.display = 'none';
+if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+        isShowingAll = !isShowingAll;
+        renderGames(currentCategory);
+        if(!isShowingAll) {
+            const targetGrid = altLayoutCategories.includes(currentCategory) ? gridAlt : gridStandard;
+            targetGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     });
 }
 
-// Category Scroll Logic
+if (searchInput) {
+    searchInput.addEventListener('keyup', (e) => {
+        renderGames(currentCategory, e.target.value);
+    });
+}
+
 const catWrapper = document.querySelector(".category-wrapper");
 const leftBtn = document.querySelector(".left-btn");
 const rightBtn = document.querySelector(".right-btn");
+
 if (catWrapper && leftBtn && rightBtn) {
     rightBtn.addEventListener("click", () => catWrapper.scrollBy({ left: 150, behavior: "smooth" }));
     leftBtn.addEventListener("click", () => catWrapper.scrollBy({ left: -150, behavior: "smooth" }));
 }
 
-// Init
-filterGames('ikan');
+// =========================================
+// 7. INISIALISASI
+// =========================================
+document.addEventListener('DOMContentLoaded', () => {
+    renderGames('ikan'); 
+});

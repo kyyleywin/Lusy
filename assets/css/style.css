@@ -170,7 +170,7 @@ body {
 
 .category-slider { 
     display: flex; 
-    align-items: center; /* PENTING: Untuk mensejajarkan tombol dan wrapper */
+    align-items: center; 
     justify-content: center; 
     gap: 10px; 
     margin: 10px auto; 
@@ -210,13 +210,11 @@ body {
     border-radius: 5px; 
     cursor: pointer; 
     flex-shrink: 0; 
-
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 18px; 
 }
-
 
 .game-section { 
   width: 100%; 
@@ -240,10 +238,13 @@ body {
     border: 2px solid transparent;
 }
 .game-item:hover { transform: translateY(-5px); border-color: var(--accent); }
+
+/* UPDATE: Agar foto landscape rapi di grid */
 .game-item img { 
   width: 100%; 
   height: 100%; 
-  object-fit: cover; 
+  object-fit: cover; /* Crop rapi */
+  object-position: center; /* Fokus tengah */
   transition: transform 0.5s ease; 
 }
 
@@ -297,9 +298,9 @@ body {
 }
 
 
-/* === 2. GAYA BARU: GRID ALTERNATIF (IKAN) === */
+/* === GRID ALTERNATIF (LIST VIEW) === */
 .game-grid-alt {
-    display: none; /* Sembunyikan default, diatur oleh JS */
+    display: none; 
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 10px;
 }
@@ -333,7 +334,6 @@ body {
     justify-content: center;
     min-width: 0; 
 }
-/* Override gaya title/description lama */
 .game-item-alt .game-title,
 .game-item-alt .game-description {
     position: static; 
@@ -353,7 +353,6 @@ body {
     color: #ccc;
 }
 
-
 /* LOAD MORE & ANIMASI */
 .load-more { 
   display: block; 
@@ -372,116 +371,120 @@ body {
 
 
 /* =========================================
-   MEDIA QUERIES (LOGIKA HP & TABLET)
+   LIGHTBOX / PREVIEW MODE (NEW)
    ========================================= */
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 4000; 
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.95);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
 
+.lightbox-content {
+    margin: auto;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 90%;
+    max-height: 80vh; 
+    object-fit: contain; /* Menjaga rasio foto landscape agar tidak gepeng */
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    animation: zoomIn 0.3s;
+}
+
+.lightbox-caption {
+    margin: 15px auto;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.close-lightbox {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 4002;
+    transition: 0.3s;
+}
+.close-lightbox:hover { color: var(--accent); }
+
+.lightbox-btn {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 25px;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    background: rgba(0,0,0,0.3); 
+    border: none;
+    z-index: 4001;
+    transition: 0.3s;
+}
+.lightbox-btn:hover { background-color: var(--accent); color: black; }
+.prev-btn-lb { left: 10px; border-radius: 5px; }
+.next-btn-lb { right: 10px; border-radius: 5px; }
+
+@keyframes zoomIn {
+    from {transform:scale(0.8); opacity:0} 
+    to {transform:scale(1); opacity:1}
+}
+
+
+/* =========================================
+   MEDIA QUERIES
+   ========================================= */
 @media (max-width: 768px) {
-    
-    .navbar { 
-      padding: 0 15px;
-      height: 60px; 
-    }
-    .logo { 
-      font-size: 18px; 
-      position: relative;
-      z-index: 600; 
-    }
-    .search { 
-      flex: 1; 
-      margin: 0 5px; 
-      justify-content: flex-end; 
-    }
-
-    /* Fix Search Bar */
+    .navbar { padding: 0 15px; height: 60px; }
+    .logo { font-size: 18px; position: relative; z-index: 600; }
+    .search { flex: 1; margin: 0 5px; justify-content: flex-end; }
     .search.active input {
-        position: absolute; 
-        top: 50%; 
-        transform: translateY(-50%); 
-        z-index: 500;
-        left: 5px; /* Lebar search */
-        right: 50px; 
-        width: auto; 
-        padding: 6px 12px; 
-        opacity: 1; 
-        pointer-events: auto;
+        position: absolute; top: 50%; transform: translateY(-50%); 
+        z-index: 500; left: 5px; right: 50px; width: auto; padding: 6px 12px; 
+        opacity: 1; pointer-events: auto;
     }
-    
-    .hamburger { 
-      display: flex; 
-      z-index: 3001; 
-    }
-    .hamburger.active span:nth-child(1) { 
-      transform: translateY(8.5px) rotate(45deg); 
-    }
-    .hamburger.active span:nth-child(2) { 
-      opacity: 0; 
-    }
-    .hamburger.active span:nth-child(3) { 
-      transform: translateY(-8.5px) rotate(-45deg); 
-    }
+    .hamburger { display: flex; z-index: 3001; }
+    .hamburger.active span:nth-child(1) { transform: translateY(8.5px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-8.5px) rotate(-45deg); }
 
     .nav-menu {
-        position: fixed; 
-        top: 60px; 
-        right: -100%; 
-        width: 70%; 
-        height: calc(100vh - 60px); 
-        background: rgba(20, 20, 20, 0.90);
-        backdrop-filter: blur(15px); 
-        flex-direction: column; 
-        align-items: flex-start; 
-        padding: 30px; 
-        transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        border-left: 1px solid var(--border); 
+        position: fixed; top: 60px; right: -100%; width: 70%; height: calc(100vh - 60px); 
+        background: rgba(20, 20, 20, 0.90); backdrop-filter: blur(15px); 
+        flex-direction: column; align-items: flex-start; padding: 30px; 
+        transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-left: 1px solid var(--border); 
         box-shadow: -5px 0 15px rgba(0,0,0,0.5);
     }
-    .nav-menu.active { 
-      right: 0; 
-      
-    }
-    .nav-link { 
-    font-size: 18px; 
-    padding: 15px 0; 
-    width: 100%; 
-    border-bottom: 1px solid var(--border); 
-      
-    }
-    .nav-link::after { 
-      display: none; 
-      
-    } 
+    .nav-menu.active { right: 0; }
+    .nav-link { font-size: 18px; padding: 15px 0; width: 100%; border-bottom: 1px solid var(--border); }
+    .nav-link::after { display: none; } 
 
-    .jumbotron-slider { 
-      margin-top: 70px; 
-      aspect-ratio: 14/6;
-      width: 100%; 
-      border-radius: 0; 
-    }
-      
-    .game-grid { 
-      grid-template-columns: repeat(3, 1fr); 
-      gap: 10px; 
-    }
-
-    /* Penyesuaian GAYA BARU di mobile */
-    .game-grid-alt { 
-      grid-template-columns: 1fr; 
-    }
-    .game-item-alt { 
-      height: 80px; 
-      padding: 8px; 
-    }
-    .game-item-alt img { 
-      width: 60px; 
-      height: 60px; 
-      margin-right: 10px;
-    }
-    .game-item-alt .game-title { 
-      font-size: 14px; 
-      
-    }
-    .game-item-alt .game-description { 
-      font-size: 11px; 
-      
-    }
+    .jumbotron-slider { margin-top: 70px; aspect-ratio: 14/6; width: 100%; border-radius: 0; }
+    .game-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .game-grid-alt { grid-template-columns: 1fr; }
+    .game-item-alt { height: 80px; padding: 8px; }
+    .game-item-alt img { width: 60px; height: 60px; margin-right: 10px; }
+    .game-item-alt .game-title { font-size: 14px; }
+    .game-item-alt .game-description { font-size: 11px; }
 }
