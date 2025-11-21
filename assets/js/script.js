@@ -108,9 +108,13 @@ function renderGames(category, searchTerm = "") {
     // 1. AMBIL DATA
     let items = [...(database[category] || [])];
 
-    // 2. SORTING ABJAD (Khusus Ikan & Akun)
+    // 2. SORTING / PENGURUTAN
     if (['ikan', 'akun'].includes(category)) {
+        // Kalau Ikan/Akun: Urutkan sesuai Abjad (A-Z)
         items.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (category === 'testimoni') {
+        // Kalau Testimoni: Balik urutan (Yang paling bawah di file jadi paling atas)
+        items.reverse(); 
     }
 
     // 3. FILTER PENCARIAN
