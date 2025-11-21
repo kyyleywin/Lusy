@@ -70,7 +70,7 @@
 
         function renderDetail(item, category) {
             const container = document.getElementById('appDetail');
-            const publisher = category === 'ikan' ? 'Ikan Fish It' : 'Akun Fish It';
+            const publisher = category === 'ikan' ? 'Game Top Up' : 'Akun Premium';
             const bannerSrc = item.main_img || item.img; 
             const thumbSrc = item.thumb_img || item.img; 
 
@@ -86,22 +86,44 @@
             // Render Grid HTML
             let gridItemsHTML = '';
             
+            // --- GANTI DARI SINI ---
             if (varianList && varianList.length > 0) {
                 varianList.forEach((varian) => {
                     const isSoldOut = varian.stock <= 0;
                     const stockText = isSoldOut ? 'Stok Habis' : `Sisa Stok: ${varian.stock}`;
                     const activeClass = isSoldOut ? 'sold-out' : '';
                     
-                    // Update: Kirim juga data STOCK ke fungsi selectVarian
-                    const clickEvent = isSoldOut ? '' : `onclick="selectVarian(this, '${varian.name}', ${varian.stock})"`;
+                    // Event Klik
+                    const clickEvent = isSoldOut ? '' : `onclick="selectVarian(this, '${varian.name}', '${varian.stock}')"`; // Note: stock dipassing sbg string agar aman jika formatnya "16M"
                     const iconVarian = varian.img ? varian.img : thumbSrc;
+
+                    // --- LOGIKA HARGA DISKON (Updated) ---
+                    let priceHTML = '';
+                    
+                    // Cek apakah ada 'originalPrice' di data kamu
+                    if (varian.originalPrice && varian.originalPrice !== "") {
+                        // TAMPILAN ADA DISKON
+                        priceHTML = `
+                            <div class="detail-price-container">
+                                <div style="display:flex; align-items:center; gap:5px;">
+                                    <span class="price-coret">${varian.originalPrice}</span>
+                                    <span class="discount-badge">PROMO</span>
+                                </div>
+                                <div class="price-fix">${varian.price}</div>
+                            </div>
+                        `;
+                    } else {
+                        // TAMPILAN HARGA NORMAL
+                        priceHTML = `<div class="detail-item-price">${varian.price}</div>`;
+                    }
+                    // -----------------------------
 
                     gridItemsHTML += `
                     <div class="detail-item-card ${activeClass}" ${clickEvent}>
                         <img src="${iconVarian}" alt="Icon"> 
                         <div class="detail-item-info">
                             <div class="detail-item-title">${varian.name}</div>
-                            <div class="detail-item-price">${varian.price}</div>
+                            ${priceHTML} 
                             <div class="detail-item-stock">${stockText}</div>
                         </div>
                         ${isSoldOut ? '<div class="sold-out-badge">SOLD</div>' : ''}
@@ -111,6 +133,7 @@
             } else {
                 gridItemsHTML = '<div style="color:#888; font-style:italic; grid-column:1/-1; text-align:center;">Belum ada varian tersedia.</div>';
             }
+            // --- SAMPAI SINI ---
 
             container.innerHTML = `
                 <div class="detail-header">
