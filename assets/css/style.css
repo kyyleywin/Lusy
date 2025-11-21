@@ -532,6 +532,50 @@ body {
 .warning-icon { color: #ff5050; font-size: 20px; margin-top: 2px; }
 .warning-text { color: #ffcece; font-size: 13px; line-height: 1.5; }
 
+/* =========================================
+   STYLE TAMBAHAN: HARGA DISKON
+   ========================================= */
+.detail-price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 2px;
+}
+
+.price-coret {
+    font-size: 11px;
+    color: #888; /* Warna abu-abu pudar */
+    text-decoration: line-through; /* Garis tengah (coret) */
+    font-style: italic;
+}
+
+.price-fix {
+    font-size: 13px;
+    color: var(--accent); /* Warna Emas */
+    font-weight: 700;
+}
+
+.discount-badge {
+    background: #d32f2f; /* Merah */
+    color: white;
+    font-size: 9px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-left: 5px;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Supaya tampilan kartu rapi saat ada 2 baris harga */
+.detail-item-card {
+    align-items: flex-start !important; 
+    padding: 10px !important;
+}
+.detail-item-card img {
+    margin-top: 5px;
+}
+
 
 /* =========================================
    8. MEDIA QUERIES (RESPONSIVE)
