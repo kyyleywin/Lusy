@@ -61,7 +61,7 @@ if (slides.length > 0) {
         if (slideIndex >= totalSlides) slideIndex = 0;
         if(slidesContainer) slidesContainer.style.transform = `translateX(-${slideIndex * 100}%)`;
     }
-    setInterval(showSlides, 3000);
+    setInterval(showSlides, 5000);
 }
 
 // =========================================
