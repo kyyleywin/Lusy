@@ -105,6 +105,18 @@ const categoryItems = document.querySelectorAll('.category-item');
 function renderGames(category, searchTerm = "") {
     currentCategory = category;
     
+    // --- [BAGIAN BARU: INTERGRASI RATING] ---
+    // Jika kategori adalah 'rating', panggil fungsi dari file rate-ui.js
+    // dan hentikan fungsi renderGames agar tidak menimpa tampilan rating.
+    if (category === 'rating') {
+        if (typeof renderRatingPage === 'function') {
+            // Kirim status isShowingAll (true/false) ke fungsi rating
+            renderRatingPage(isShowingAll);
+        }
+        return; 
+    }
+    // ----------------------------------------
+
     // 1. AMBIL DATA
     let items = [...(database[category] || [])];
 
@@ -128,6 +140,7 @@ function renderGames(category, searchTerm = "") {
     }
 
     // 4. PERSIAPAN GRID
+    // Reset Grid jika bukan Rating
     gridStandard.innerHTML = '';
     gridAlt.innerHTML = '';
     gridStandard.style.display = 'none';
@@ -183,7 +196,6 @@ function renderGames(category, searchTerm = "") {
             
         } else {
             // --- TAMPILAN KOTAK (Testimoni) ---
-            // [PERBAIKAN] Tidak ada deskripsi sama sekali di tampilan Grid
             card.className = 'game-item animate-show';
             card.style.animationDelay = `${animDelay}s`;
             
@@ -238,8 +250,6 @@ function updateLightboxContent() {
         lightboxImg.src = data.img;
         
         // [PERBAIKAN DI SINI]
-        // Cek dulu apakah data.desc ada? 
-        // Jika tidak ada, jangan tampilkan "undefined", tampilkan Title saja.
         if(lightboxCaption) {
             if (data.desc && data.desc.trim() !== "") {
                 lightboxCaption.textContent = `${data.title} - ${data.desc}`;
