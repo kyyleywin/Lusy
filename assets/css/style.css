@@ -573,44 +573,4 @@ body {
     margin-bottom: 5px;
 }
 .rating-name { font-size: 16px; font-weight: 800; color: #fff; }
-.rating-date { font-size: 11px; color: #666; background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 4px; }
-.rating-stars { font-size: 12px; margin-bottom: 8px; color: #FFD700; }
-.rating-comment { font-size: 13px; color: #ccc; line-height: 1.4; font-style: italic; }
-
-
-/* =========================================
-   10. MEDIA QUERIES (RESPONSIVE)
-   ========================================= */
-@media (max-width: 768px) {
-    .navbar { padding: 0 15px; height: 60px; }
-    .logo { font-size: 18px; position: relative; z-index: 600; }
-    .search { flex: 1; margin: 0 5px; justify-content: flex-end; }
-    .search.active input { position: absolute; top: 50%; transform: translateY(-50%); z-index: 500; left: 5px; right: 50px; width: auto; padding: 6px 12px; opacity: 1; pointer-events: auto; }
-    .hamburger { display: flex; z-index: 3001; }
-    .hamburger.active span:nth-child(1) { transform: translateY(8.5px) rotate(45deg); }
-    .hamburger.active span:nth-child(2) { opacity: 0; }
-    .hamburger.active span:nth-child(3) { transform: translateY(-8.5px) rotate(-45deg); }
-
-    .nav-menu { position: fixed; top: 60px; right: -100%; width: 70%; height: calc(100vh - 60px); background: rgba(20, 20, 20, 0.90); backdrop-filter: blur(15px); flex-direction: column; align-items: flex-start; padding: 30px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-left: 1px solid var(--border); box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
-    .nav-menu.active { right: 0; }
-    .nav-link { font-size: 18px; padding: 15px 0; width: 100%; border-bottom: 1px solid var(--border); }
-    .nav-link::after { display: none; } 
-
-    .jumbotron-slider { margin-top: 70px; aspect-ratio: 14/6; width: 100%; border-radius: 0; }
-    .game-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .game-grid-alt { grid-template-columns: 1fr; }
-    .game-item-alt { height: 80px; padding: 8px; }
-    .game-item-alt img { width: 60px; height: 60px; margin-right: 10px; }
-    .game-item-alt .game-title { font-size: 14px; }
-    .game-item-alt .game-description { font-size: 11px; }
-
-    .detail-banner { height: 130px; }
-    .detail-info-container { flex-direction: row; align-items: center; margin-top: -40px; text-align: left; gap: 15px; }
-    .detail-thumb { width: 85px; height: 85px; border-width: 2px; }
-    .detail-title { font-size: 18px; margin-bottom: 3px; }
-    .detail-subtitle { font-size: 12px; -webkit-line-clamp: 2; }
-    .detail-publisher { font-size: 11px; }
-    .detail-features { gap: 8px; }
-    .feature-box { padding: 8px 5px; }
-    .detail-item-grid { grid-template-columns: 1fr; }
-}
+.rating-date { font-size: 11px; color: #666; background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 4p
