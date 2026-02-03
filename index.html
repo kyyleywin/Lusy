@@ -1,86 +1,210 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luscyy - Store</title>
-    
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streaming Video Embed</title>
+  <style>
+    body { margin:0; font-family: Arial, sans-serif; background:#0f172a; color:#e5e7eb; }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1100px; margin:auto; padding:16px; }
+
+    /* HOME */
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:16px; }
+    .card { background:#020617; border-radius:12px; overflow:hidden; cursor:pointer; transition:transform .2s; }
+    .card:hover { transform:scale(1.03); }
+    .card img { width:100%; height:260px; object-fit:cover; }
+    .card h3 { padding:10px; font-size:16px; }
+
+    /* PLAYER */
+    .player iframe { width:100%; height:480px; border-radius:12px; border:none; background:#000; }
+    .controls { display:flex; gap:10px; margin:12px 0; flex-wrap:wrap; }
+    select, button { background:#020617; color:#e5e7eb; border:1px solid #334155; padding:8px 12px; border-radius:8px; }
+    button { cursor:pointer; }
+    button:hover { background:#1e293b; }
+
+    .episode-list { display:grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap:10px; margin-top:16px; }
+    .episode { background:#020617; border:1px solid #334155; padding:10px; border-radius:8px; cursor:pointer; text-align:center; }
+    .episode.active { background:#2563eb; }
+
+    .hidden { display:none; }
+  </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo">Stock Luscy</div>
-        <div class="nav-menu" id="navMenu">
-            <a href="index.html" class="nav-link">Home</a>
-            <a href="#" class="nav-link" data-nav-cat="ikan">Ikan</a>
-            <a href="#" class="nav-link" data-nav-cat="akun">Akun</a>
-            <a href="#" class="nav-link" data-nav-cat="rating">Rating</a>
-            <a href="#" class="nav-link" data-nav-cat="pay">Payment</a>
-            <a href="#" class="nav-link" data-nav-cat="testimoni">Testimoni</a>
-        </div>
+<div class="container">
 
-        <div class="search" id="searchContainer">
-            <button type="button" class="search-icon" id="searchIcon">
-                <i class="fas fa-search"></i> 
-            </button>
-            <input type="text" placeholder="Cari..." id="searchInput">
-        </div>
+  <!-- HOME PAGE -->
+  <div id="home">
+    <h1>Daftar Series</h1>
+    <div class="grid" id="seriesGrid"></div>
+  </div>
 
-        <div id="hamburger" class="hamburger">
-            <span></span><span></span><span></span>
-        </div>
-    </nav>
+  <!-- EPISODE PAGE -->
+  <div id="episodes" class="hidden">
+    <button onclick="goHome()">⬅ Kembali</button>
+    <h2 id="seriesTitle"></h2>
 
-    <div id="overlay" class="overlay"></div>
-    
-    <div class="jumbotron-slider">
-        <div class="slides">
-            <img src="https://files.catbox.moe/cv34dz.jpg" class="slide" alt="Slide 1">
-            <img src="https://files.catbox.moe/e1r5aa.webp" class="slide" alt="Slide 2">
-            <img src="https://files.catbox.moe/3rmqts.jpg" class="slide" alt="Slide 3">
-            <img src="https://files.catbox.moe/m2xqiq.jpg" class="slide" alt="Slide 4">
-        </div>
+    <label>Pilih Season:</label>
+    <select id="seasonSelect" onchange="renderEpisodes()"></select>
+
+    <div class="episode-list" id="episodeList"></div>
+  </div>
+
+  <!-- PLAYER PAGE -->
+  <div id="playerPage" class="hidden">
+    <button onclick="backToEpisodes()">⬅ Daftar Episode</button>
+    <h2 id="playTitle"></h2>
+
+    <div class="player">
+      <iframe id="videoFrame" allowfullscreen></iframe>
     </div>
 
-    <div class="category-slider">
-        <button class="nav-btn left-btn">‹</button>
-        <div class="category-wrapper">
-            <div class="category-item active" data-category="ikan">Ikan</div>
-            <div class="category-item" data-category="akun">Akun</div>
-            <div class="category-item" data-category="rating"><i class="fas fa-star"></i> Rating</div>
-            <div class="category-item" data-category="pay">Payment</div>
-            <div class="category-item" data-category="testimoni">Testimoni</div>
-        </div>
-        <button class="nav-btn right-btn">›</button>
+    <div class="controls">
+      <label>Resolusi:</label>
+      <select id="resolutionSelect" onchange="changeResolution()"></select>
+      <button onclick="nextEpisode()">Next Episode ▶</button>
     </div>
+  </div>
 
-    <div class="game-section">
-        <div class="game-grid" id="gameGrid"></div>
-        
-        <div class="game-grid-alt" id="gameGridAlt"></div>
+</div>
 
-        <button class="load-more" id="loadMoreBtn">Tampilkan Lebih Banyak</button>
-    </div>
-    
-    <div id="lightbox" class="lightbox">
-        <span class="close-lightbox">&times;</span>
-        <button class="lightbox-btn prev-btn-lb">&#10094;</button>
-        <img class="lightbox-content" id="lightboxImg">
-        <div class="lightbox-caption" id="lightboxCaption"></div>
-        <button class="lightbox-btn next-btn-lb">&#10095;</button>
-    </div>
-    
-    <div id="main-footer"></div>
+<script>
+// ================= DATA =================
+const data = [
+  {
+    id: 'series1',
+    title: 'Contoh Series A',
+    thumbnail: 'https://picsum.photos/400/600?1',
+    seasons: {
+      'Season 1': [
+        {
+          title: 'Episode 1',
+          sources: {
+            '360p': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            '720p': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            '1080p': 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+          }
+        },
+        {
+          title: 'Episode 2',
+          sources: {
+            '360p': 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            '720p': 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+          }
+        }
+      ],
+      'Season 2': [
+        {
+          title: 'Episode 1',
+          sources: {
+            '720p': 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+          }
+        }
+      ]
+    }
+  }
+];
 
-    <script src="lib/ikan/ikan.js"></script>
-    <script src="lib/akun/akun.js"></script>
-    <script src="lib/pay/pay.js"></script>
-    <script src="lib/testimoni/testi.js"></script>
-    <script src="lib/rating/rate.js"></script>     
-    <script src="lib/rating/rate-ui.js"></script>
-    <script src="assets/js/footer.js"></script>
-    <script src="assets/js/script.js"></script>
+let currentSeries = null;
+let currentSeason = null;
+let currentEpisodeIndex = 0;
+
+// ================= HOME =================
+const grid = document.getElementById('seriesGrid');
+data.forEach(series => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<img src="${series.thumbnail}"><h3>${series.title}</h3>`;
+  card.onclick = () => openSeries(series);
+  grid.appendChild(card);
+});
+
+function goHome() {
+  show('home');
+}
+
+// ================= EPISODES =================
+function openSeries(series) {
+  currentSeries = series;
+  document.getElementById('seriesTitle').innerText = series.title;
+
+  const seasonSelect = document.getElementById('seasonSelect');
+  seasonSelect.innerHTML = '';
+
+  Object.keys(series.seasons).forEach(season => {
+    const opt = document.createElement('option');
+    opt.value = season;
+    opt.textContent = season;
+    seasonSelect.appendChild(opt);
+  });
+
+  currentSeason = seasonSelect.value;
+  renderEpisodes();
+  show('episodes');
+}
+
+function renderEpisodes() {
+  currentSeason = document.getElementById('seasonSelect').value;
+  const list = document.getElementById('episodeList');
+  list.innerHTML = '';
+
+  currentSeries.seasons[currentSeason].forEach((ep, i) => {
+    const div = document.createElement('div');
+    div.className = 'episode';
+    div.innerText = ep.title;
+    div.onclick = () => playEpisode(i);
+    list.appendChild(div);
+  });
+}
+
+function backToEpisodes() {
+  show('episodes');
+}
+
+// ================= PLAYER =================
+function playEpisode(index) {
+  currentEpisodeIndex = index;
+  const episode = currentSeries.seasons[currentSeason][index];
+  document.getElementById('playTitle').innerText = `${currentSeries.title} - ${currentSeason} - ${episode.title}`;
+
+  const resSelect = document.getElementById('resolutionSelect');
+  resSelect.innerHTML = '';
+
+  Object.keys(episode.sources).forEach(res => {
+    const opt = document.createElement('option');
+    opt.value = res;
+    opt.textContent = res;
+    resSelect.appendChild(opt);
+  });
+
+  const firstRes = resSelect.value;
+  document.getElementById('videoFrame').src = episode.sources[firstRes];
+
+  show('playerPage');
+}
+
+function changeResolution() {
+  const episode = currentSeries.seasons[currentSeason][currentEpisodeIndex];
+  const res = document.getElementById('resolutionSelect').value;
+  document.getElementById('videoFrame').src = episode.sources[res];
+}
+
+function nextEpisode() {
+  const episodes = currentSeries.seasons[currentSeason];
+  if (currentEpisodeIndex < episodes.length - 1) {
+    playEpisode(currentEpisodeIndex + 1);
+  } else {
+    alert('Episode terakhir di season ini');
+  }
+}
+
+// ================= UTIL =================
+function show(id) {
+  ['home','episodes','playerPage'].forEach(v => document.getElementById(v).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+</script>
+
 </body>
 </html>
